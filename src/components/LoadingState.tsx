@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import LottieAnimation from "@/components/LottieAnimation";
 
 const ROTATING_TEXTS = [
   "Analyse des annonces...",
@@ -26,52 +27,14 @@ export default function LoadingState() {
     >
       {/* Main Loading Indicator */}
       <div className="flex flex-col items-center gap-6">
-        {/* Animated house icon */}
-        <div
-          className="relative"
-          style={{
-            width: "80px",
-            height: "80px",
-            borderRadius: "50%",
-            background: "var(--accent-light)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <svg
-            width="40"
-            height="40"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="animate-pulse-soft"
-          >
-            <path
-              d="M3 21V10l9-7 9 7v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"
-              stroke="var(--accent)"
-              strokeWidth="2"
-              strokeLinejoin="round"
-              fill="var(--accent)"
-              fillOpacity="0.2"
-            />
-            <path
-              d="M9 21v-6h6v6"
-              stroke="var(--accent)"
-              strokeWidth="2"
-              strokeLinejoin="round"
-            />
-          </svg>
-
-          {/* Spinning ring */}
-          <div
-            className="absolute inset-0 animate-spin"
-            style={{
-              border: "3px solid transparent",
-              borderTopColor: "var(--accent)",
-              borderRadius: "50%",
-              animationDuration: "1.5s",
-            }}
+        {/* Animated airplane */}
+        <div style={{ width: "120px", height: "120px" }}>
+          <LottieAnimation
+            src="/animations/airplane.lottie"
+            loop
+            autoplay
+            speed={1}
+            style={{ width: "100%", height: "100%" }}
           />
         </div>
 

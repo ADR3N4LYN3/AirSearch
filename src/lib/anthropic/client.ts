@@ -41,24 +41,45 @@ export async function callAnthropic(
       ];
     }
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify(body),
-    });
+    const MAX_RETRIES = 2;
+    let response: Response | null = null;
+
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) break;
+
+      const isRetryable = response.status === 429 || response.status >= 500;
+      if (!isRetryable || attempt === MAX_RETRIES) {
+        clearTimeout(timeoutId);
+        await response.text();
+        console.error(
+          `[Anthropic API] HTTP ${response.status} - Request ID: ${response.headers.get('request-id') || 'N/A'}`
+        );
+        return {
+          success: false,
+          error: "Service de recherche temporairement indisponible. Réessayez dans quelques instants.",
+        };
+      }
+
+      // Exponential backoff: 1s, 2s
+      const delay = 1000 * (attempt + 1);
+      console.warn(`[Anthropic API] HTTP ${response.status}, retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES})`);
+      await new Promise((r) => setTimeout(r, delay));
+    }
 
     clearTimeout(timeoutId);
 
-    if (!response.ok) {
-      await response.text();
-      console.error(
-        `[Anthropic API] HTTP ${response.status} - Request ID: ${response.headers.get('request-id') || 'N/A'}`
-      );
+    if (!response || !response.ok) {
       return {
         success: false,
         error: "Service de recherche temporairement indisponible. Réessayez dans quelques instants.",

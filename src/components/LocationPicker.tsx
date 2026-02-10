@@ -42,6 +42,7 @@ export default function LocationPicker({
   const [showMap, setShowMap] = useState(false);
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
@@ -99,7 +100,6 @@ export default function LocationPicker({
           setPredictions(
             results.map((r) => {
               const terms = r.terms.map((t) => t.value);
-              // terms = ["Ville", "Département", "France"] or ["Ville", "France"]
               const city = terms[0];
               const rest = terms.slice(1).join(", ");
               return {
@@ -110,9 +110,11 @@ export default function LocationPicker({
             })
           );
           setShowDropdown(true);
+          setHighlightedIndex(-1);
         } else {
           setPredictions([]);
           setShowDropdown(false);
+          setHighlightedIndex(-1);
         }
       }
     );
@@ -160,6 +162,46 @@ export default function LocationPicker({
     [onDestinationChange, fetchPredictions]
   );
 
+  const handleInputKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!showDropdown || predictions.length === 0) {
+        if (e.key === "ArrowDown" && predictions.length > 0) {
+          setShowDropdown(true);
+          setHighlightedIndex(0);
+          e.preventDefault();
+        }
+        return;
+      }
+
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setHighlightedIndex((prev) =>
+            prev < predictions.length - 1 ? prev + 1 : 0
+          );
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setHighlightedIndex((prev) =>
+            prev > 0 ? prev - 1 : predictions.length - 1
+          );
+          break;
+        case "Enter":
+          e.preventDefault();
+          if (highlightedIndex >= 0 && highlightedIndex < predictions.length) {
+            handleSelect(predictions[highlightedIndex]);
+          }
+          break;
+        case "Escape":
+          e.preventDefault();
+          setShowDropdown(false);
+          setHighlightedIndex(-1);
+          break;
+      }
+    },
+    [showDropdown, predictions, highlightedIndex, handleSelect]
+  );
+
   // Show map if coordinates already set
   useEffect(() => {
     if (lat !== undefined && lng !== undefined) {
@@ -176,9 +218,6 @@ export default function LocationPicker({
     },
     [onLocationChange]
   );
-
-  // Radius in meters for the circle
-  const radiusMeters = radius * 1000;
 
   return (
     <div className="flex flex-col gap-4">
@@ -249,9 +288,18 @@ export default function LocationPicker({
             ref={inputRef}
             id="destination"
             type="text"
+            role="combobox"
+            aria-expanded={showDropdown && predictions.length > 0}
+            aria-haspopup="listbox"
+            aria-autocomplete="list"
+            aria-controls="destination-listbox"
+            aria-activedescendant={
+              highlightedIndex >= 0 ? `destination-option-${highlightedIndex}` : undefined
+            }
             value={destination}
             onChange={(e) => handleInputChange(e.target.value)}
             onFocus={() => predictions.length > 0 && setShowDropdown(true)}
+            onKeyDown={handleInputKeyDown}
             placeholder="Rechercher une destination..."
             autoComplete="off"
             style={{
@@ -265,6 +313,9 @@ export default function LocationPicker({
           {showDropdown && predictions.length > 0 && (
             <div
               ref={dropdownRef}
+              id="destination-listbox"
+              role="listbox"
+              aria-label="Suggestions de destinations"
               style={{
                 position: "absolute",
                 top: "calc(100% + 4px)",
@@ -278,50 +329,56 @@ export default function LocationPicker({
                 overflow: "hidden",
               }}
             >
-              {predictions.map((p) => (
-                <button
-                  key={p.placeId}
-                  type="button"
-                  onClick={() => handleSelect(p)}
-                  className="flex items-center gap-3 w-full text-left cursor-pointer"
-                  style={{
-                    padding: "12px 16px",
-                    background: "none",
-                    border: "none",
-                    borderBottom: "1px solid var(--border)",
-                    transition: "background 0.15s ease",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.background = "var(--surface-hover)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.background = "none")
-                  }
-                >
-                  <MapPin
-                    size={16}
-                    color="var(--accent)"
-                    style={{ flexShrink: 0 }}
-                  />
-                  <div>
-                    <span
-                      className="text-sm font-medium"
-                      style={{ color: "var(--text-primary)" }}
-                    >
-                      {p.mainText}
-                    </span>
-                    <span
-                      className="text-xs"
-                      style={{
-                        color: "var(--text-secondary)",
-                        marginLeft: "6px",
-                      }}
-                    >
-                      {p.secondaryText}
-                    </span>
-                  </div>
-                </button>
-              ))}
+              {predictions.map((p, index) => {
+                const isHighlighted = index === highlightedIndex;
+                return (
+                  <button
+                    key={p.placeId}
+                    id={`destination-option-${index}`}
+                    role="option"
+                    aria-selected={isHighlighted}
+                    type="button"
+                    onClick={() => handleSelect(p)}
+                    onMouseEnter={() => setHighlightedIndex(index)}
+                    className="flex items-center gap-3 w-full text-left cursor-pointer"
+                    style={{
+                      padding: "12px 16px",
+                      background: isHighlighted ? "var(--surface-hover)" : "none",
+                      border: "none",
+                      borderBottom: "1px solid var(--border)",
+                      transition: "background 0.15s ease",
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isHighlighted) {
+                        e.currentTarget.style.background = "none";
+                      }
+                    }}
+                  >
+                    <MapPin
+                      size={16}
+                      color="var(--accent)"
+                      style={{ flexShrink: 0 }}
+                    />
+                    <div>
+                      <span
+                        className="text-sm font-medium"
+                        style={{ color: "var(--text-primary)" }}
+                      >
+                        {p.mainText}
+                      </span>
+                      <span
+                        className="text-xs"
+                        style={{
+                          color: "var(--text-secondary)",
+                          marginLeft: "6px",
+                        }}
+                      >
+                        {p.secondaryText}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -334,13 +391,16 @@ export default function LocationPicker({
           >
             Rayon de recherche
           </span>
-          <div className="flex gap-2 flex-wrap justify-center">
+          <div className="flex gap-2 flex-wrap justify-center" role="radiogroup" aria-label="Rayon de recherche">
             {RADIUS_OPTIONS.map((r) => {
               const active = radius === r;
               return (
                 <button
                   key={r}
                   type="button"
+                  role="radio"
+                  aria-checked={active}
+                  aria-label={`${r} kilomètres`}
                   onClick={() => onRadiusChange(r)}
                   className="px-3.5 py-1.5 text-xs font-medium cursor-pointer select-none"
                   style={{

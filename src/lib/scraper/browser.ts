@@ -13,9 +13,22 @@ chromium.use(StealthPlugin());
 // ---------------------------------------------------------------------------
 let browserInstance: Browser | null = null;
 let browserLaunchPromise: Promise<Browser> | null = null;
+let browserUseCount = 0;
+const MAX_BROWSER_USES = 100;
 
 async function getBrowser(): Promise<Browser> {
-  if (browserInstance?.isConnected()) return browserInstance;
+  // Recycle browser after MAX_BROWSER_USES to prevent memory leaks
+  if (browserInstance && browserUseCount >= MAX_BROWSER_USES) {
+    console.log(`[Scraper] Recycling browser after ${browserUseCount} uses`);
+    await browserInstance.close().catch(() => {});
+    browserInstance = null;
+    browserUseCount = 0;
+  }
+
+  if (browserInstance?.isConnected()) {
+    browserUseCount++;
+    return browserInstance;
+  }
 
   if (browserLaunchPromise) return browserLaunchPromise;
 
@@ -30,6 +43,7 @@ async function getBrowser(): Promise<Browser> {
   }).then(browser => {
     browserInstance = browser;
     browserLaunchPromise = null;
+    browserUseCount = 1;
     return browser;
   }).catch(err => {
     browserLaunchPromise = null;
@@ -80,7 +94,7 @@ async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise
     });
 
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 12000 });
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => {});
 
     const extractor = EXTRACTORS[platform];
     const listings = extractor ? await extractor(page) : [];

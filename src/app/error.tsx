@@ -1,5 +1,7 @@
 "use client";
 
+import LottieAnimation from "@/components/LottieAnimation";
+
 export default function Error({
   error,
   reset,
@@ -13,32 +15,14 @@ export default function Error({
       style={{ background: "var(--bg)" }}
     >
       <div className="text-center max-w-md">
-        <div
-          className="mx-auto mb-6"
-          style={{
-            width: "80px",
-            height: "80px",
-            borderRadius: "50%",
-            background: "var(--accent-light)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <svg
-            width="40"
-            height="40"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--accent)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 8v4" />
-            <circle cx="12" cy="16" r="0.5" fill="var(--accent)" />
-          </svg>
+        <div className="mx-auto mb-6" style={{ width: "200px", height: "200px" }}>
+          <LottieAnimation
+            src="/animations/error-404.json"
+            loop
+            autoplay
+            speed={0.8}
+            style={{ width: "100%", height: "100%" }}
+          />
         </div>
         <h1
           className="text-2xl font-bold mb-3"

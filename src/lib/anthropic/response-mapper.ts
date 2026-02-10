@@ -1,6 +1,30 @@
 import type { SearchResponse } from "../types";
 import { tryParseJson } from "./json-parser";
 
+const ALLOWED_URL_DOMAINS = [
+  "airbnb.fr", "airbnb.com",
+  "booking.com",
+  "abritel.fr", "vrbo.com",
+  "expedia.fr", "expedia.com",
+  "hotels.com",
+  "tripadvisor.fr", "tripadvisor.com",
+];
+
+function sanitizeUrl(raw: string | null): string | null {
+  if (!raw) return null;
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return null;
+    const hostname = parsed.hostname.replace(/^www\./, "");
+    if (!ALLOWED_URL_DOMAINS.some((d) => hostname === d || hostname.endsWith("." + d))) {
+      return null;
+    }
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Detect the platform from a booking URL when the AI doesn't specify it.
  */
@@ -29,7 +53,7 @@ export function mapApiResponse(rawText: string): SearchResponse {
       data: {
         summary: String(parsed.summary),
         results: parsed.results.map((r: Record<string, unknown>) => {
-          const url = r.url ? String(r.url) : null;
+          const url = sanitizeUrl(r.url ? String(r.url) : null);
           const rawRating = r.rating != null ? Number(r.rating) : null;
           const rating = rawRating != null && !isNaN(rawRating) && rawRating > 0 && rawRating <= 5
             ? Math.round(rawRating * 10) / 10
@@ -58,10 +82,10 @@ export function mapApiResponse(rawText: string): SearchResponse {
     };
   }
 
-  // If JSON parsing failed, return raw text so the frontend can still display something
+  // If JSON parsing failed, return error with raw text
   return {
-    success: true,
+    success: false,
     rawText,
-    data: undefined,
+    error: "L'IA n'a pas pu structurer les résultats. Veuillez réessayer.",
   };
 }

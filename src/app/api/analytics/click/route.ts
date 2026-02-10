@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getClientIp, isRateLimited } from "@/lib/rate-limiter";
 
 /**
  * API endpoint pour tracker les clics sur les liens affiliés
@@ -21,6 +22,11 @@ interface ClickData {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req);
+    if (isRateLimited(ip)) {
+      return NextResponse.json({ success: false, error: "Too many requests" }, { status: 429 });
+    }
+
     const data: ClickData = await req.json();
 
     // Validation basique

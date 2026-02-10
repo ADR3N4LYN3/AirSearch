@@ -100,7 +100,7 @@ export function addAffiliateParams(url: string | null, platform: string): string
 export async function trackAffiliateClick(
   platform: string,
   url: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ) {
   try {
     // Envoi asynchrone pour ne pas bloquer l'ouverture du lien
@@ -120,27 +120,3 @@ export async function trackAffiliateClick(
   }
 }
 
-// ============================================
-// 4. UTILITAIRES
-// ============================================
-
-/**
- * Vérifie si un lien contient déjà des paramètres d'affiliation
- */
-export function hasAffiliateParams(url: string): boolean {
-  try {
-    const urlObj = new URL(url);
-    return Object.values(AFFILIATE_CONFIGS).some(config =>
-      urlObj.searchParams.has(config.paramName)
-    );
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Retourne la liste des plateformes configurées pour l'affiliation
- */
-export function getConfiguredPlatforms(): string[] {
-  return Object.keys(AFFILIATE_CONFIGS);
-}
