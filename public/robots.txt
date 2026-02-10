@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+# Crawl delay
+Crawl-delay: 0
+
+Sitemap: https://airsearch.fr/sitemap.xml

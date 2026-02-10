@@ -1,0 +1,33 @@
+export interface ChipItemData {
+  id: string;
+  label: string;
+}
+
+export const AMENITIES_DATA: ChipItemData[] = [
+  { id: "wifi", label: "WiFi" },
+  { id: "pool", label: "Piscine" },
+  { id: "parking", label: "Parking" },
+  { id: "kitchen", label: "Cuisine" },
+  { id: "washer", label: "Lave-linge" },
+  { id: "ac", label: "Climatisation" },
+  { id: "heating", label: "Chauffage" },
+  { id: "garden", label: "Jardin" },
+  { id: "balcony", label: "Balcon/Terrasse" },
+  { id: "pet_friendly", label: "Animaux acceptés" },
+  { id: "bbq", label: "Barbecue" },
+  { id: "sea_view", label: "Vue mer" },
+];
+
+export const PROPERTY_TYPES_DATA: ChipItemData[] = [
+  { id: "apartment", label: "Appartement" },
+  { id: "house", label: "Maison" },
+  { id: "villa", label: "Villa" },
+  { id: "cabin", label: "Chalet/Cabane" },
+  { id: "studio", label: "Studio" },
+  { id: "loft", label: "Loft" },
+  { id: "guesthouse", label: "Maison d'hôtes" },
+];
+
+// Re-export with original names for server-side compatibility
+export const AMENITIES = AMENITIES_DATA;
+export const PROPERTY_TYPES = PROPERTY_TYPES_DATA;
