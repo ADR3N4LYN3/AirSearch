@@ -58,10 +58,18 @@ function normalizePriceDisplay(raw: unknown): string {
 }
 
 /**
+ * Strip web_search citation tags (<cite index="...">...</cite>) from text.
+ */
+function stripCitations(text: string): string {
+  return text.replace(/<\/?cite[^>]*>/gi, "");
+}
+
+/**
  * Map raw API text response into a structured SearchResponse.
  */
 export function mapApiResponse(rawText: string): SearchResponse {
-  const parsed = tryParseJson(rawText);
+  const cleaned = stripCitations(rawText);
+  const parsed = tryParseJson(cleaned);
 
   if (parsed && parsed.summary && Array.isArray(parsed.results)) {
     return {
