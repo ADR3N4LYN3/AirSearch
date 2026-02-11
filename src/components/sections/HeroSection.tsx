@@ -1,5 +1,3 @@
-"use client";
-
 import { FadeIn, TextReveal } from "@/components/animations";
 
 export default function HeroSection() {

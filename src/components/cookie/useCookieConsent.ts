@@ -29,8 +29,8 @@ export function useCookieConsent() {
     if (savedPrefs) {
       try {
         setPreferences(JSON.parse(savedPrefs));
-      } catch {
-        // ignore
+      } catch (error) {
+        console.warn("[CookieConsent] Failed to parse saved preferences:", error);
       }
     }
   }, []);

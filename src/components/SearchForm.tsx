@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import dynamic from "next/dynamic";
 import type { SearchRequest, SearchResponse } from "@/lib/types";
 import { AMENITIES, PROPERTY_TYPES } from "@/lib/constants-ui";
 import {
@@ -17,10 +18,11 @@ import {
 import ChipSelect from "./ChipSelect";
 import LoadingState from "./LoadingState";
 import ResultsList from "./ResultsList";
-import LocationPicker from "./LocationPicker";
 import DatePicker from "./DatePicker";
 import GuestSection from "./search-form/GuestSection";
 import BudgetSection from "./search-form/BudgetSection";
+
+const LocationPicker = dynamic(() => import("./LocationPicker"), { ssr: false });
 
 const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? "";
 
@@ -53,23 +55,23 @@ export default function SearchForm({ defaultLocation = "", attractions = [] }: S
   const [error, setError] = useState<string | null>(null);
   const formRef = useRef<HTMLElement>(null);
 
-  const handlePropertyTypeToggle = (id: string) => {
+  const handlePropertyTypeToggle = useCallback((id: string) => {
     setPropertyTypes((prev) =>
       prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
     );
-  };
+  }, []);
 
-  const handleAmenityToggle = (id: string) => {
+  const handleAmenityToggle = useCallback((id: string) => {
     setAmenities((prev) =>
       prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
     );
-  };
+  }, []);
 
-  const handleAttractionToggle = (id: string) => {
+  const handleAttractionToggle = useCallback((id: string) => {
     setSelectedAttractions((prev) =>
       prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
     );
-  };
+  }, []);
 
   const handleLocationChange = useCallback((newLat: number, newLng: number) => {
     setLat(newLat);
@@ -131,7 +133,8 @@ export default function SearchForm({ defaultLocation = "", attractions = [] }: S
       }
 
       setResults(data);
-    } catch {
+    } catch (error) {
+      console.error("[SearchForm] Search request failed:", error);
       setError("Impossible de contacter le serveur. Réessayez plus tard.");
     } finally {
       setLoading(false);

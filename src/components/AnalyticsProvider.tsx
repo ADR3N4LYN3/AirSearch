@@ -25,8 +25,8 @@ export default function AnalyticsProvider() {
         const prefs = JSON.parse(prefsRaw);
         setAnalyticsAllowed(prefs.analytics === true);
       }
-    } catch {
-      // ignore
+    } catch (error) {
+      console.warn("[AnalyticsProvider] Failed to parse cookie preferences:", error);
     }
   }
 

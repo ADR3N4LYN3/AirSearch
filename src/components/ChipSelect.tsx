@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import type { ChipItem } from "@/lib/constants-ui";
 
 interface ChipSelectProps {
@@ -9,7 +10,7 @@ interface ChipSelectProps {
   multi?: boolean;
 }
 
-export default function ChipSelect({
+export default memo(function ChipSelect({
   items,
   selected,
   onToggle,
@@ -67,4 +68,4 @@ export default function ChipSelect({
       })}
     </div>
   );
-}
+})

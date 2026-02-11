@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/animations";
 
