@@ -91,8 +91,10 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: "/icon.svg",
   },
   ...(process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION
     ? { verification: { google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION } }
