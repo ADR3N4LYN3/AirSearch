@@ -1,6 +1,23 @@
-# 🚀 Guide de Déploiement AirSearch sur VPS
+← [Retour au README](../README.md)
 
-## 📋 Prérequis
+# Guide de Déploiement AirSearch sur VPS
+
+## Table des matières
+- [Prérequis](#prérequis)
+- [Déploiement Rapide](#déploiement-rapide)
+- [Tests](#tests)
+- [Monitoring](#monitoring)
+- [Mise à jour de l'application](#mise-à-jour-de-lapplication)
+- [Sécurité](#sécurité)
+- [Performance](#performance)
+- [Troubleshooting](#troubleshooting)
+- [Nettoyage](#nettoyage)
+- [Support](#support)
+- [Checklist finale](#checklist-finale)
+
+---
+
+## Prérequis
 
 Sur ton VPS, installe :
 ```bash
@@ -12,7 +29,7 @@ sudo systemctl start docker
 
 ---
 
-## 🔧 Déploiement Rapide
+## Déploiement Rapide
 
 ### 1️⃣ Cloner le projet
 
@@ -84,7 +101,7 @@ Le script va :
 
 ---
 
-## 🧪 Tests
+## Tests
 
 ### Test local (sans domaine)
 
@@ -116,7 +133,7 @@ strict-transport-security: max-age=31536000; includeSubDomains
 
 ---
 
-## 📊 Monitoring
+## Monitoring
 
 ### Voir les logs
 
@@ -146,7 +163,7 @@ sudo docker stats
 
 ---
 
-## 🔄 Mise à jour de l'application
+## Mise à jour de l'application
 
 ```bash
 cd /opt/AirSearch
@@ -164,7 +181,7 @@ sudo docker-compose -f docker-compose.prod.yml logs -f
 
 ---
 
-## 🛡️ Sécurité
+## Sécurité
 
 ### Firewall (UFW)
 
@@ -191,7 +208,7 @@ sudo systemctl start fail2ban
 
 ---
 
-## 📈 Performance
+## Performance
 
 ### Vérifier les limites de ressources
 
@@ -223,7 +240,7 @@ sudo docker-compose -f docker-compose.prod.yml up -d
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### L'app ne démarre pas
 
@@ -266,7 +283,7 @@ sudo docker-compose -f docker-compose.prod.yml exec airsearch node -e "require('
 
 ---
 
-## 🗑️ Nettoyage
+## Nettoyage
 
 ### Supprimer l'installation
 
@@ -289,7 +306,7 @@ sudo docker volume prune
 
 ---
 
-## 📞 Support
+## Support
 
 ### Commandes rapides
 
@@ -318,7 +335,7 @@ Tous les logs sont dans `/var/log/nginx/` :
 
 ---
 
-## ✅ Checklist finale
+## Checklist finale
 
 Avant de mettre en production :
 
@@ -334,4 +351,4 @@ Avant de mettre en production :
 
 ---
 
-**🎉 Ton AirSearch est maintenant en production avec SSL et reverse proxy ! 🚀**
+**Ton AirSearch est maintenant en production avec SSL et reverse proxy !**

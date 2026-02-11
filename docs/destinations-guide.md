@@ -1,4 +1,17 @@
-# Guide: Ajouter une nouvelle destination
+← [Retour au README](../README.md)
+
+# Guide : Ajouter une destination
+
+## Table des matières
+- [Procédure en 3 étapes](#procédure-en-3-étapes)
+- [Conseils pour un bon contenu SEO](#conseils-pour-un-bon-contenu-seo)
+- [Checklist avant de commit](#checklist-avant-de-commit)
+- [Exemple de ville bien optimisée](#exemple-de-ville-bien-optimisée)
+- [Images à créer](#images-à-créer)
+- [Tester la nouvelle destination](#tester-la-nouvelle-destination)
+- [Questions fréquentes](#questions-fréquentes)
+
+---
 
 ## Procédure en 3 étapes
 
@@ -211,4 +224,4 @@ Non, pour l'instant AirSearch est 100% français. Focus sur le marché FR.
 
 ---
 
-**Besoin d'aide ?** Consultez `SEO_IMPLEMENTATION.md` pour la documentation complète.
+**Besoin d'aide ?** Consultez `seo.md` pour la documentation complète.

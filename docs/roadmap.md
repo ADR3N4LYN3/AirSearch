@@ -1,4 +1,22 @@
-# 🚀 AirSearch - Rapport d'Amélioration Full-Stack
+← [Retour au README](../README.md)
+
+# Roadmap & Améliorations
+
+## Table des matières
+- [Résumé Exécutif](#résumé-exécutif)
+- [Métriques Avant/Après](#métriques-avantaprès)
+- [Corrections Backend Critiques](#1-corrections-backend-critiques)
+- [Améliorations Docker & DevOps](#2-améliorations-docker--devops)
+- [Headers de Sécurité](#3-headers-de-sécurité)
+- [Tests Automatisés](#4-tests-automatisés)
+- [Pipeline CI/CD](#5-pipeline-cicd)
+- [Dépendances Ajoutées](#6-dépendances-ajoutées)
+- [Prochaines Étapes Recommandées](#7-prochaines-étapes-recommandées)
+- [Checklist de Déploiement](#8-checklist-de-déploiement)
+- [Ressources](#9-ressources)
+- [Conclusion](#10-conclusion)
+
+---
 
 **Date:** 2026-02-09
 **Version:** 1.0
@@ -6,7 +24,7 @@
 
 ---
 
-## 📋 Résumé Exécutif
+## Résumé Exécutif
 
 Ce rapport détaille les **40+ améliorations critiques** apportées au projet AirSearch après une analyse complète par 4 agents spécialisés. Le projet est maintenant **production-ready** avec une sécurité renforcée, des tests automatisés, et un pipeline CI/CD complet.
 
@@ -25,7 +43,7 @@ Ce rapport détaille les **40+ améliorations critiques** apportées au projet A
 
 ---
 
-## 🔒 1. Corrections Backend Critiques
+## 1. Corrections Backend Critiques
 
 ### 1.1 Memory Leak setInterval ✅ CORRIGÉ
 
@@ -177,7 +195,7 @@ return {
 
 ---
 
-## 🐳 2. Améliorations Docker & DevOps
+## 2. Améliorations Docker & DevOps
 
 ### 2.1 Image SHA256 Pinning ✅ AJOUTÉ
 
@@ -243,7 +261,7 @@ deploy:
 
 ---
 
-## 🔐 3. Headers de Sécurité
+## 3. Headers de Sécurité
 
 **Fichier:** `next.config.ts`
 
@@ -273,7 +291,7 @@ async headers() {
 
 ---
 
-## 🧪 4. Tests Automatisés
+## 4. Tests Automatisés
 
 ### 4.1 Configuration Vitest
 
@@ -315,7 +333,7 @@ async headers() {
 
 ---
 
-## 🚀 5. Pipeline CI/CD
+## 5. Pipeline CI/CD
 
 **Fichier:** `.github/workflows/ci.yml`
 
@@ -349,7 +367,7 @@ jobs:
 
 ---
 
-## 📦 6. Dépendances Ajoutées
+## 6. Dépendances Ajoutées
 
 **Installer avec:**
 ```bash
@@ -370,7 +388,7 @@ npm install
 
 ---
 
-## 🎯 7. Prochaines Étapes Recommandées
+## 7. Prochaines Étapes Recommandées
 
 ### Priorité Haute (Cette Semaine)
 1. **Installer les dépendances**
@@ -409,7 +427,7 @@ npm install
 
 ---
 
-## 📊 8. Checklist de Déploiement
+## 8. Checklist de Déploiement
 
 Avant de déployer en production :
 
@@ -426,7 +444,7 @@ Avant de déployer en production :
 
 ---
 
-## 🔗 9. Ressources
+## 9. Ressources
 
 ### Documentation
 - [Next.js Security](https://nextjs.org/docs/app/building-your-application/configuring/security)
@@ -454,7 +472,7 @@ curl http://localhost:3100/api/health
 
 ---
 
-## ✅ 10. Conclusion
+## 10. Conclusion
 
 Le projet AirSearch a été **considérablement sécurisé et optimisé** :
 

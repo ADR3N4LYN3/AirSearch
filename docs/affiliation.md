@@ -1,8 +1,22 @@
-# 💰 Guide de monétisation par affiliation — AirSearch
+← [Retour au README](../README.md)
+
+# Guide de monétisation par affiliation — AirSearch
+
+## Table des matières
+- [Potentiel de revenus](#potentiel-de-revenus)
+- [Étapes de configuration](#étapes-de-configuration)
+- [Suivre vos performances](#suivre-vos-performances)
+- [Optimisation des conversions](#optimisation-des-conversions)
+- [Stratégies avancées](#stratégies-avancées)
+- [Conformité légale](#conformité-légale)
+- [Support](#support)
+- [Ressources](#ressources)
+
+---
 
 Ce guide explique comment configurer les liens d'affiliation pour générer des revenus avec AirSearch.
 
-## 📊 Potentiel de revenus
+## Potentiel de revenus
 
 Avec **1000 utilisateurs/mois** qui font chacun 2 recherches et cliquent sur 1 résultat :
 - **Clics mensuels** : 2000 clics
@@ -12,7 +26,7 @@ Avec **1000 utilisateurs/mois** qui font chacun 2 recherches et cliquent sur 1 r
 - **Commission moyenne** : 4% (Booking) = 20€/réservation
 - **📈 Revenus mensuels estimés** : **800€ - 2000€/mois**
 
-## 🚀 Étapes de configuration
+## Étapes de configuration
 
 ### 1. S'inscrire aux programmes d'affiliation
 
@@ -79,7 +93,7 @@ npm run dev
    https://www.booking.com/hotel/fr/example.html?aid=987654&utm_source=airsearch&utm_medium=referral
    ```
 
-## 📈 Suivre vos performances
+## Suivre vos performances
 
 ### Option 1 : Dans la console du navigateur (développement)
 
@@ -125,7 +139,7 @@ await db.clicks.create({
 });
 ```
 
-## 🎯 Optimisation des conversions
+## Optimisation des conversions
 
 ### 1. Améliorer le taux de clic (CTR)
 - ✅ Ajouter des badges "Meilleur prix" ou "Recommandé"
@@ -146,7 +160,7 @@ Exemple dans `ResultCard.tsx` :
 </a>
 ```
 
-## 💡 Stratégies avancées
+## Stratégies avancées
 
 ### 1. Liens profonds (Deep Links)
 Certaines plateformes paient plus pour les liens directs vers la page de réservation (checkout) :
@@ -170,7 +184,7 @@ Redistribuez une partie de votre commission aux utilisateurs :
 - "Réservez via AirSearch et obtenez 5€ de remboursement"
 - Augmente drastiquement le taux de conversion
 
-## 🛡️ Conformité légale
+## Conformité légale
 
 ### 1. RGPD (Déjà implémenté ✅)
 Vous avez déjà un [CookieBanner](src/components/CookieBanner.tsx) et une [page confidentialité](src/app/confidentialite/page.tsx).
@@ -189,7 +203,7 @@ Les revenus d'affiliation sont imposables. Consultez un comptable pour :
 - Auto-entrepreneur (si < 70k€/an en France)
 - Société (SASU, SAS, SARL) si revenus plus élevés
 
-## 📞 Support
+## Support
 
 ### Problèmes courants
 
@@ -207,7 +221,7 @@ Les revenus d'affiliation sont imposables. Consultez un comptable pour :
 - Oui ! Vous pouvez ajouter Google AdSense en parallèle
 - Ne surchargez pas la page pour ne pas nuire à l'UX
 
-## 📚 Ressources
+## Ressources
 
 - [Guide Booking.com Affiliate](https://www.booking.com/affiliate-program/documentation)
 - [Airbnb Associates FAQ](https://www.airbnb.com/associates/faq)
@@ -217,6 +231,6 @@ Les revenus d'affiliation sont imposables. Consultez un comptable pour :
 
 ---
 
-**Prêt à générer vos premiers revenus ?** 🚀
+**Prêt à générer vos premiers revenus ?**
 
 Suivez les étapes ci-dessus, inscrivez-vous aux programmes, et regardez les commissions arriver !
