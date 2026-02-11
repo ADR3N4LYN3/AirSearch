@@ -43,11 +43,13 @@ FROM node:20-slim AS runner
 
 WORKDIR /app
 
-# Install runtime dependencies for Chromium
+# Install runtime dependencies for Chromium (full set to avoid missing .so errors)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
     libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 \
     libpango-1.0-0 libcairo2 libasound2 libxshmfence1 \
+    libxfixes3 libx11-6 libxcb1 libxext6 libxi6 libxtst6 \
+    libglib2.0-0 libdbus-1-3 libexpat1 \
     fonts-liberation fonts-noto-color-emoji \
     && rm -rf /var/lib/apt/lists/*
 
