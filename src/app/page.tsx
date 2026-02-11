@@ -9,7 +9,6 @@ import CTASection from "@/components/sections/CTASection";
 import CloudBackground from "@/components/CloudBackground";
 
 const SearchForm = dynamic(() => import("@/components/SearchForm"), {
-  ssr: false,
   loading: () => (
     <div className="flex items-center justify-center py-12" style={{ minHeight: "200px" }}>
       <div

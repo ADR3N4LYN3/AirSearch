@@ -5,7 +5,7 @@ import type { ScrapeResult } from "@/lib/scraper/types";
 import type { SearchResponse } from "@/lib/types";
 import { getClientIp, isRateLimited } from "@/lib/rate-limiter";
 import { validateSearchRequest } from "@/lib/validators/search";
-import { GLOBAL_TIMEOUT_MS } from "@/lib/constants";
+import { GLOBAL_TIMEOUT_MS, ANTHROPIC_FALLBACK_TIMEOUT_MS } from "@/lib/constants";
 import { sanitizeUrl } from "@/lib/anthropic/response-mapper";
 
 function normalize(s: string): string {
@@ -101,10 +101,10 @@ export async function POST(request: NextRequest) {
 
       if (totalListings > 0) {
         console.log(
-          `[Search] Scraped ${totalListings} listings from ${scrapeResults.filter((r) => r.success).length}/3 platforms`
+          `[Search] Scraped ${totalListings} listings from ${scrapeResults.filter((r) => r.success).length}/${scrapeResults.length} platforms`
         );
         const analysisPrompt = buildAnalysisPrompt(searchRequest, scrapeResults);
-        result = await callAnthropic(analysisPrompt, { useTools: false, timeout: 40000 });
+        result = await callAnthropic(analysisPrompt, { useTools: false, timeout: ANTHROPIC_FALLBACK_TIMEOUT_MS });
         injectScrapedImages(result, scrapeResults);
       } else {
         console.log("[Search] Scraping returned 0 listings, falling back to web_search");

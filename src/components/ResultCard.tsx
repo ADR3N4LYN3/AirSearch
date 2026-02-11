@@ -8,8 +8,9 @@ import { addAffiliateParams, trackAffiliateClick } from "@/lib/affiliate";
 const PLATFORM_COLORS: Record<string, { bg: string; text: string }> = {
   "Airbnb": { bg: "#FF385C", text: "#FFFFFF" },
   "Booking.com": { bg: "#003580", text: "#FFFFFF" },
-  "Abritel": { bg: "#0E4D92", text: "#FFFFFF" },
   "Vrbo": { bg: "#1A4480", text: "#FFFFFF" },
+  "Holidu": { bg: "#00B4A0", text: "#FFFFFF" },
+  "HomeToGo": { bg: "#0066FF", text: "#FFFFFF" },
   "Expedia": { bg: "#FFCC00", text: "#1A1A1A" },
   "Hotels.com": { bg: "#D32F2F", text: "#FFFFFF" },
   "TripAdvisor": { bg: "#34E0A1", text: "#1A1A1A" },
@@ -27,7 +28,8 @@ function arePropsEqual(prev: ResultCardProps, next: ResultCardProps) {
     prev.result.url === next.result.url &&
     prev.result.price === next.result.price &&
     prev.result.platform === next.result.platform &&
-    prev.result.rating === next.result.rating
+    prev.result.rating === next.result.rating &&
+    prev.result.image === next.result.image
   );
 }
 
