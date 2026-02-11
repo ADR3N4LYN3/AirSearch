@@ -24,7 +24,11 @@ export default function LoadingState() {
     <div
       className="flex flex-col items-center py-16 gap-12 animate-fade-in w-full"
       style={{ background: "var(--bg)" }}
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
     >
+      <span className="sr-only">Recherche en cours, veuillez patienter</span>
       {/* Main Loading Indicator */}
       <div className="flex flex-col items-center gap-6">
         {/* Animated airplane */}

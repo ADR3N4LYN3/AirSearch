@@ -78,11 +78,11 @@ export default function SearchForm({ defaultLocation = "", attractions = [] }: S
     setLng(newLng);
   }, []);
 
-  const scrollToTop = () => {
+  const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!destination.trim()) {
@@ -139,7 +139,7 @@ export default function SearchForm({ defaultLocation = "", attractions = [] }: S
     } finally {
       setLoading(false);
     }
-  };
+  }, [destination, selectedAttractions, extraNotes, checkin, checkout, adults, children, infants, budgetMin, budgetMax, propertyTypes, amenities, lat, lng, radius, scrollToTop]);
 
   const handleReset = () => {
     setResults(null);

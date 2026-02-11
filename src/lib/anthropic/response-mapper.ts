@@ -10,7 +10,7 @@ const ALLOWED_URL_DOMAINS = [
   "tripadvisor.fr", "tripadvisor.com",
 ];
 
-function sanitizeUrl(raw: string | null): string | null {
+export function sanitizeUrl(raw: string | null): string | null {
   if (!raw) return null;
   try {
     const parsed = new URL(raw);

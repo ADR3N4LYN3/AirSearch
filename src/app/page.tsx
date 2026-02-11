@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
@@ -5,8 +6,24 @@ import FeaturesSection from "@/components/sections/FeaturesSection";
 import HowItWorksSection from "@/components/sections/HowItWorksSection";
 
 import CTASection from "@/components/sections/CTASection";
-import SearchForm from "@/components/SearchForm";
 import CloudBackground from "@/components/CloudBackground";
+
+const SearchForm = dynamic(() => import("@/components/SearchForm"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center py-12" style={{ minHeight: "200px" }}>
+      <div
+        className="animate-spin rounded-full"
+        style={{
+          width: "32px",
+          height: "32px",
+          border: "3px solid var(--border)",
+          borderTopColor: "var(--accent)",
+        }}
+      />
+    </div>
+  ),
+});
 
 export default function Home() {
   return (

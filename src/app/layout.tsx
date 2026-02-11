@@ -160,6 +160,10 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${nunitoSans.variable} ${dmSans.variable}`} suppressHydrationWarning>
       <head>
+        {/* dangerouslySetInnerHTML is used here intentionally: this inline script
+            sets the theme before first paint to prevent a flash of wrong theme (FOIT).
+            The content is static and safe — it only reads localStorage and sets a
+            data-theme attribute on <html>. No user input is interpolated. */}
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem("theme");if(!t){t=window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"}document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`,

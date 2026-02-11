@@ -5,9 +5,15 @@ import type { ScrapeResult } from "@/lib/scraper/types";
 import type { SearchResponse } from "@/lib/types";
 import { getClientIp, isRateLimited } from "@/lib/rate-limiter";
 import { validateSearchRequest } from "@/lib/validators/search";
+import { GLOBAL_TIMEOUT_MS } from "@/lib/constants";
+import { sanitizeUrl } from "@/lib/anthropic/response-mapper";
 
 function normalize(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9àâäéèêëïîôùûüÿçœæ]/g, "");
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
 }
 
 function injectScrapedImages(result: SearchResponse, scrapeResults: ScrapeResult[]): void {
@@ -30,12 +36,14 @@ function injectScrapedImages(result: SearchResponse, scrapeResults: ScrapeResult
   }
 
   for (const r of result.data.results) {
-    r.image =
+    const rawImage =
       byTitlePlatform.get(`${r.title}::${r.platform}`) ||
       byTitle.get(r.title) ||
       (r.url ? byUrl.get(r.url) : null) ||
       byNormTitle.get(normalize(r.title)) ||
       null;
+    // Validate scraped image URL before injection
+    r.image = rawImage ? sanitizeUrl(rawImage) : null;
   }
 }
 
@@ -78,7 +86,6 @@ export async function POST(request: NextRequest) {
   const searchRequest = validation.data;
 
   // --- Scraping + AI analysis (with fallback to web_search) ---
-  const GLOBAL_TIMEOUT_MS = 55_000;
 
   const operationPromise = (async () => {
     let result;

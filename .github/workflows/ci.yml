@@ -77,7 +77,6 @@ jobs:
 
       - name: Security audit
         run: npm audit --audit-level=moderate
-        continue-on-error: true
 
   docker-security-scan:
     runs-on: ubuntu-latest

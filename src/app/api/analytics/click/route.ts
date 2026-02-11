@@ -58,9 +58,17 @@ export async function POST(req: NextRequest) {
     const location = sanitizeString(b.location, 200);
     const price = sanitizeString(b.price, 50);
 
+    let logUrl: string | undefined;
+    try {
+      const parsed = new URL(url);
+      logUrl = parsed.hostname + parsed.pathname;
+    } catch {
+      logUrl = undefined;
+    }
+
     console.log("Affiliate click tracked:", {
       platform,
-      url: url.split("?")[0],
+      url: logUrl,
       title,
       location,
       price,

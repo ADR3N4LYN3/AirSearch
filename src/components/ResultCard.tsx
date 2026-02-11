@@ -20,6 +20,17 @@ interface ResultCardProps {
   index: number;
 }
 
+function arePropsEqual(prev: ResultCardProps, next: ResultCardProps) {
+  return (
+    prev.index === next.index &&
+    prev.result.title === next.result.title &&
+    prev.result.url === next.result.url &&
+    prev.result.price === next.result.price &&
+    prev.result.platform === next.result.platform &&
+    prev.result.rating === next.result.rating
+  );
+}
+
 export default memo(function ResultCard({ result, index }: ResultCardProps) {
   const platformStyle = PLATFORM_COLORS[result.platform] || { bg: "var(--text-secondary)", text: "#FFFFFF" };
 
@@ -354,4 +365,4 @@ export default memo(function ResultCard({ result, index }: ResultCardProps) {
       </div>
     </article>
   );
-});
+}, arePropsEqual);

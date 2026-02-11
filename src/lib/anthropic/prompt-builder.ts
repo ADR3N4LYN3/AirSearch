@@ -1,8 +1,16 @@
 import type { SearchRequest } from "../types";
 import { formatCriteria } from "../format-criteria";
 
+function escapePromptValue(value: string): string {
+  return value
+    .replace(/[`"']/g, "")
+    .replace(/[\n\r]/g, " ")
+    .trim();
+}
+
 export function buildSearchPrompt(criteria: SearchRequest): string {
   const parts: string[] = [];
+  const safeDestination = escapePromptValue(criteria.destination);
 
   parts.push(
     `Tu es un assistant spécialisé dans la recherche de locations de vacances et hébergements.`
@@ -19,13 +27,13 @@ export function buildSearchPrompt(criteria: SearchRequest): string {
     `1. Effectue des recherches web CIBLÉES par plateforme. Exemples de requêtes efficaces :`
   );
   parts.push(
-    `   - "site:airbnb.fr ${criteria.destination} location" ou "airbnb ${criteria.destination} location vacances"`
+    `   - "site:airbnb.fr ${safeDestination} location" ou "airbnb ${safeDestination} location vacances"`
   );
   parts.push(
-    `   - "site:booking.com ${criteria.destination} appartement" ou "booking.com ${criteria.destination} location"`
+    `   - "site:booking.com ${safeDestination} appartement" ou "booking.com ${safeDestination} location"`
   );
   parts.push(
-    `   - "site:abritel.fr ${criteria.destination}" ou "abritel ${criteria.destination} location vacances"`
+    `   - "site:abritel.fr ${safeDestination}" ou "abritel ${safeDestination} location vacances"`
   );
   parts.push(
     `2. VARIE les plateformes : inclus au minimum 2 plateformes différentes dans tes résultats. Ne propose PAS uniquement des résultats Airbnb.`

@@ -29,8 +29,11 @@ export function validateSearchRequest(
   if (destination.length > 200) {
     return { valid: false, error: "Le champ 'destination' ne doit pas dépasser 200 caractères." };
   }
-  // Anti-SSRF: reject anything that looks like a URL
+  // Anti-SSRF: reject anything that looks like a URL or internal address
   if (/(:\/\/|^https?|^ftp|^file|^www\.)/i.test(destination)) {
+    return { valid: false, error: "Le champ 'destination' contient des caractères non autorisés." };
+  }
+  if (/\blocalhost\b|127\.0\.0\.1|0\.0\.0\.0|::1|\.local\b/i.test(destination)) {
     return { valid: false, error: "Le champ 'destination' contient des caractères non autorisés." };
   }
   if (!SAFE_TEXT_REGEX.test(destination)) {

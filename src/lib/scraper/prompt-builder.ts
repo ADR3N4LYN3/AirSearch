@@ -2,6 +2,14 @@ import type { SearchRequest } from "../types";
 import type { ScrapeResult } from "./types";
 import { formatCriteria } from "../format-criteria";
 
+function escapeScrapedValue(value: string): string {
+  return value
+    .replace(/[`"']/g, "")
+    .replace(/[\n\r]/g, " ")
+    .trim()
+    .slice(0, 300);
+}
+
 export function buildAnalysisPrompt(
   criteria: SearchRequest,
   scrapeResults: ScrapeResult[]
@@ -29,11 +37,11 @@ export function buildAnalysisPrompt(
       parts.push(`\n--- ${result.platform} (${top.length} annonces) ---`);
       for (const l of top) {
         const line = [
-          l.title,
-          l.price ? `PRIX: ${l.price}` : "PRIX: NON DISPONIBLE",
+          escapeScrapedValue(l.title),
+          l.price ? `PRIX: ${escapeScrapedValue(l.price)}` : "PRIX: NON DISPONIBLE",
           l.rating != null ? `${l.rating}/5` : "",
           l.reviewCount != null ? `${l.reviewCount} avis` : "",
-          l.location || "",
+          l.location ? escapeScrapedValue(l.location) : "",
           l.url || "pas de lien",
         ].filter(Boolean).join(" | ");
         parts.push(`• ${line}`);

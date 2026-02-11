@@ -20,8 +20,9 @@ export const ALLOWED_PLATFORMS = new Set<string>(PLATFORMS);
 // Timeouts (ms)
 // ---------------------------------------------------------------------------
 export const SCRAPE_TIMEOUT_MS = 12_000;
-export const GLOBAL_TIMEOUT_MS = 28_000;
-export const ANTHROPIC_TIMEOUT_MS = 25_000;
+export const GLOBAL_TIMEOUT_MS = 55_000;
+export const ANTHROPIC_TIMEOUT_MS = 30_000;
+export const ANTHROPIC_FALLBACK_TIMEOUT_MS = 40_000;
 
 // ---------------------------------------------------------------------------
 // Validation limits
