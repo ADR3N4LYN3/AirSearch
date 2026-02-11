@@ -4,10 +4,14 @@ import { tryParseJson } from "./json-parser";
 const ALLOWED_URL_DOMAINS = [
   "airbnb.fr", "airbnb.com",
   "booking.com",
-  "abritel.fr", "vrbo.com",
+  "vrbo.com",
+  "holidu.fr", "holidu.com",
+  "hometogo.fr", "hometogo.com",
   "expedia.fr", "expedia.com",
   "hotels.com",
+  "gites-de-france.com",
   "tripadvisor.fr", "tripadvisor.com",
+  "abritel.fr",
 ];
 
 export function sanitizeUrl(raw: string | null): string | null {
@@ -33,11 +37,14 @@ export function detectPlatform(url: string | null): string {
   const lower = url.toLowerCase();
   if (lower.includes("airbnb")) return "Airbnb";
   if (lower.includes("booking.com")) return "Booking.com";
-  if (lower.includes("abritel")) return "Abritel";
   if (lower.includes("vrbo")) return "Vrbo";
+  if (lower.includes("holidu")) return "Holidu";
+  if (lower.includes("hometogo")) return "HomeToGo";
   if (lower.includes("expedia")) return "Expedia";
   if (lower.includes("hotels.com")) return "Hotels.com";
+  if (lower.includes("gites-de-france")) return "Gîtes de France";
   if (lower.includes("tripadvisor")) return "TripAdvisor";
+  if (lower.includes("abritel")) return "Abritel";
   return "Autre";
 }
 

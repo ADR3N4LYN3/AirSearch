@@ -7,6 +7,16 @@ import { getClientIp, isRateLimited } from "@/lib/rate-limiter";
 import { validateSearchRequest } from "@/lib/validators/search";
 import { GLOBAL_TIMEOUT_MS, ANTHROPIC_FALLBACK_TIMEOUT_MS } from "@/lib/constants";
 import { sanitizeUrl } from "@/lib/anthropic/response-mapper";
+import {
+  buildCacheKey,
+  buildSearchVector,
+  getFromMemory,
+  setInMemory,
+  getFromSqlite,
+  setInSqlite,
+  findSimilarSearch,
+  storeSearchVector,
+} from "@/lib/cache";
 
 function normalize(s: string): string {
   return s
@@ -85,6 +95,30 @@ export async function POST(request: NextRequest) {
 
   const searchRequest = validation.data;
 
+  // --- Cache lookup: L1 (memory) → L2 (SQLite) → L3 (vector similarity) ---
+  const cacheKey = buildCacheKey(searchRequest);
+
+  const memoryHit = getFromMemory(cacheKey);
+  if (memoryHit) {
+    console.log(`[Search] L1 cache hit for ${cacheKey}`);
+    return NextResponse.json(memoryHit, { status: 200 });
+  }
+
+  const sqliteHit = getFromSqlite(cacheKey);
+  if (sqliteHit) {
+    console.log(`[Search] L2 cache hit for ${cacheKey}`);
+    setInMemory(cacheKey, sqliteHit);
+    return NextResponse.json(sqliteHit, { status: 200 });
+  }
+
+  const searchVector = buildSearchVector(searchRequest);
+  const vectorHit = findSimilarSearch(searchVector);
+  if (vectorHit) {
+    console.log(`[Search] L3 vector cache hit (similar search found)`);
+    setInMemory(cacheKey, vectorHit);
+    return NextResponse.json(vectorHit, { status: 200 });
+  }
+
   // --- Scraping + AI analysis (with fallback to web_search) ---
 
   const operationPromise = (async () => {
@@ -137,6 +171,18 @@ export async function POST(request: NextRequest) {
       { success: false, error: "La recherche a pris trop de temps. Veuillez réessayer." },
       { status: 504 }
     );
+  }
+
+  // --- Cache write-back on success ---
+  if (result.success) {
+    setInMemory(cacheKey, result);
+    setInSqlite(cacheKey, result, {
+      destination: searchRequest.destination,
+      checkin: searchRequest.checkin ?? "",
+      checkout: searchRequest.checkout ?? "",
+      guests: searchRequest.adults + searchRequest.children,
+    });
+    storeSearchVector(cacheKey, searchVector, searchRequest.destination);
   }
 
   const statusCode = result.success ? 200 : 502;

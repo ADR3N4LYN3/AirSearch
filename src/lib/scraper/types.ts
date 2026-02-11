@@ -1,5 +1,16 @@
+export type ScrapePlatform =
+  | "Airbnb"
+  | "Booking.com"
+  | "Abritel"
+  | "Vrbo"
+  | "Holidu"
+  | "HomeToGo"
+  | "Expedia"
+  | "Hotels.com"
+  | "Gîtes de France";
+
 export interface PlatformUrl {
-  platform: "Airbnb" | "Booking.com" | "Abritel";
+  platform: ScrapePlatform;
   url: string;
 }
 
@@ -15,11 +26,11 @@ export interface ScrapedListing {
   url: string | null;
   location: string | null;
   image: string | null;
-  platform: "Airbnb" | "Booking.com" | "Abritel";
+  platform: ScrapePlatform;
 }
 
 export interface ScrapeResult {
-  platform: "Airbnb" | "Booking.com" | "Abritel";
+  platform: ScrapePlatform;
   success: boolean;
   listings: ScrapedListing[];
   error?: string;

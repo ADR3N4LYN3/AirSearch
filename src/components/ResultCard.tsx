@@ -13,6 +13,7 @@ const PLATFORM_COLORS: Record<string, { bg: string; text: string }> = {
   "HomeToGo": { bg: "#0066FF", text: "#FFFFFF" },
   "Expedia": { bg: "#FFCC00", text: "#1A1A1A" },
   "Hotels.com": { bg: "#D32F2F", text: "#FFFFFF" },
+  "Gîtes de France": { bg: "#2E7D32", text: "#FFFFFF" },
   "TripAdvisor": { bg: "#34E0A1", text: "#1A1A1A" },
 };
 
@@ -52,7 +53,7 @@ export default memo(function ResultCard({ result, index }: ResultCardProps) {
 
   return (
     <article
-      className="animate-fade-slide-up group"
+      className="animate-fade-slide-up group hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer"
       style={{
         animationDelay: `${index * 0.08}s`,
         background: "var(--surface)",
@@ -60,16 +61,6 @@ export default memo(function ResultCard({ result, index }: ResultCardProps) {
         overflow: "hidden",
         border: "1px solid var(--border)",
         boxShadow: "var(--shadow-sm)",
-        transition: "box-shadow 0.25s ease, transform 0.25s ease",
-        cursor: "pointer",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "var(--shadow-card-hover)";
-        e.currentTarget.style.transform = "translateY(-4px)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "var(--shadow-sm)";
-        e.currentTarget.style.transform = "translateY(0)";
       }}
     >
       {/* Property image or placeholder */}
@@ -151,21 +142,13 @@ export default memo(function ResultCard({ result, index }: ResultCardProps) {
         {/* Wishlist heart button */}
         <button
           type="button"
-          className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+          className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 hover:bg-white hover:scale-110"
           style={{
             background: "rgba(255, 255, 255, 0.9)",
             borderRadius: "50%",
             border: "1px solid rgba(0, 0, 0, 0.08)",
             backdropFilter: "blur(8px)",
             zIndex: 1,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(255, 255, 255, 1)";
-            e.currentTarget.style.transform = "scale(1.1)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(255, 255, 255, 0.9)";
-            e.currentTarget.style.transform = "scale(1)";
           }}
           onClick={(e) => {
             e.stopPropagation();

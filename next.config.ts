@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
     "playwright-core",
     "playwright-extra",
     "puppeteer-extra-plugin-stealth",
+    "better-sqlite3",
   ],
 
   // Production optimizations

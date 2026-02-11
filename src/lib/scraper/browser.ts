@@ -4,7 +4,12 @@ import type { Browser, Page, Route } from "playwright-core";
 import type { PlatformUrl, ScrapedListing, ScrapeResult } from "./types";
 import { extractAirbnb } from "./extractors/airbnb";
 import { extractBooking } from "./extractors/booking";
-import { extractAbritel } from "./extractors/abritel";
+import { extractVrbo } from "./extractors/vrbo";
+import { extractHolidu } from "./extractors/holidu";
+import { extractHomeToGo } from "./extractors/hometogo";
+import { extractExpedia } from "./extractors/expedia";
+import { extractHotels } from "./extractors/hotels";
+import { extractGitesDeFrance } from "./extractors/gites-de-france";
 import { SCRAPE_TIMEOUT_MS } from "@/lib/constants";
 
 chromium.use(StealthPlugin());
@@ -105,13 +110,42 @@ function cleanupBrowser() {
 process.on('SIGTERM', cleanupBrowser);
 process.on('SIGINT', cleanupBrowser);
 
+// Warm up browser on module load (non-blocking)
+if (typeof process !== "undefined" && process.env.NODE_ENV === "production") {
+  getBrowser().catch(() => {});
+}
+
+// ---------------------------------------------------------------------------
+// Third-party script domains to block (analytics, tracking, ads)
+// ---------------------------------------------------------------------------
+const BLOCKED_SCRIPT_DOMAINS = [
+  "google-analytics.com",
+  "googletagmanager.com",
+  "facebook.net",
+  "doubleclick.net",
+  "hotjar.com",
+  "clarity.ms",
+  "sentry.io",
+  "datadome.co",
+  "newrelic.com",
+  "segment.io",
+  "optimizely.com",
+  "cdn.cookielaw.org",
+  "cookiebot.com",
+];
+
 // ---------------------------------------------------------------------------
 // Extractor registry
 // ---------------------------------------------------------------------------
 const EXTRACTORS: Record<string, (page: Page) => Promise<ScrapedListing[]>> = {
   Airbnb: extractAirbnb,
   "Booking.com": extractBooking,
-  Abritel: extractAbritel,
+  Vrbo: extractVrbo,
+  Holidu: extractHolidu,
+  HomeToGo: extractHomeToGo,
+  Expedia: extractExpedia,
+  "Hotels.com": extractHotels,
+  "Gîtes de France": extractGitesDeFrance,
 };
 
 // ---------------------------------------------------------------------------
@@ -127,8 +161,15 @@ async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise
 
     await page.route("**/*", (route: Route) => {
       const type = route.request().resourceType();
-      if (["image", "media", "font"].includes(type)) {
+      if (["image", "media", "font", "stylesheet"].includes(type)) {
         return route.abort();
+      }
+      // Block third-party tracking/analytics scripts
+      if (type === "script") {
+        const reqUrl = route.request().url();
+        if (BLOCKED_SCRIPT_DOMAINS.some((d) => reqUrl.includes(d))) {
+          return route.abort();
+        }
       }
       return route.continue();
     });

@@ -4,10 +4,12 @@
 export const PLATFORMS = [
   "Airbnb",
   "Booking.com",
-  "Abritel",
   "Vrbo",
+  "Holidu",
+  "HomeToGo",
   "Expedia",
   "Hotels.com",
+  "Gîtes de France",
   "TripAdvisor",
   "Autre",
 ] as const;

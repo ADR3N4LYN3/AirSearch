@@ -29,7 +29,7 @@ export function buildAnalysisPrompt(
   parts.push("");
   parts.push(`DONNÉES RÉELLES SCRAPÉES DEPUIS LES PLATEFORMES :`);
 
-  const MAX_LISTINGS_PER_PLATFORM = 5;
+  const MAX_LISTINGS_PER_PLATFORM = 3;
   let totalListings = 0;
   for (const result of scrapeResults) {
     if (result.success && result.listings.length > 0) {
@@ -69,7 +69,7 @@ export function buildAnalysisPrompt(
       "price": "XX€/nuit",
       "description": "Description courte (1-2 phrases)",
       "highlights": ["Point fort 1", "Point fort 2"],
-      "platform": "Airbnb ou Booking.com ou Abritel",
+      "platform": "Airbnb ou Booking.com ou Vrbo ou Holidu ou HomeToGo ou Expedia ou Hotels.com ou Gîtes de France",
       "rating": 4.8,
       "reviewCount": 125,
       "url": "https://lien-exact-scrapé ou null"
