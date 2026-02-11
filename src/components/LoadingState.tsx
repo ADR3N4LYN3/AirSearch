@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import LottieAnimation from "@/components/LottieAnimation";
-import SkeletonCard from "@/components/SkeletonCard";
 
 const ROTATING_TEXTS = [
   "Analyse des annonces...",
@@ -96,21 +95,6 @@ export default function LoadingState() {
         >
           {ROTATING_TEXTS[textIndex]}
         </p>
-      </div>
-
-      {/* Skeleton Cards — Airbnb style previews */}
-      <div className="w-full max-w-6xl px-4">
-        <p
-          className="text-xs uppercase tracking-wide mb-4 text-center"
-          style={{ color: "var(--text-tertiary)" }}
-        >
-          Préparation des résultats
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[0, 1, 2, 3, 4].map((i) => (
-            <SkeletonCard key={i} index={i} />
-          ))}
-        </div>
       </div>
 
       {/* Progress bar keyframes */}
