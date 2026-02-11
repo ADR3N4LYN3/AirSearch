@@ -65,6 +65,9 @@ RUN chown -R nextjs:nodejs /ms-playwright
 # Copy production node_modules for externalized packages (playwright-core, etc.)
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 
+# Create writable data directory for SQLite cache (must be before USER switch)
+RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
+
 # Switch to non-root user
 USER nextjs
 

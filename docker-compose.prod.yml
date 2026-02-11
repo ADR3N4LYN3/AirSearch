@@ -3,11 +3,13 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:3001:3000"
     env_file:
       - .env
     environment:
       - NODE_ENV=production
+    volumes:
+      - airsearch_data:/app/data
     deploy:
       resources:
         limits:
@@ -22,3 +24,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 40s
+
+volumes:
+  airsearch_data:
