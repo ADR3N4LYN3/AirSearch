@@ -51,7 +51,7 @@ const SECTIONS: LegalSection[] = [
           Les données collectées sont utilisées uniquement pour :
         </p>
         <ul style={{ paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-          <li>Fournir les résultats de recherche personnalisés via notre fournisseur d&apos;IA</li>
+          <li>Fournir les résultats de recherche personnalisés via notre fournisseur technologique</li>
           <li>Prévenir les abus et le spam via rate limiting basé sur l&apos;IP</li>
           <li>Améliorer la qualité et la pertinence du service</li>
         </ul>
@@ -71,7 +71,7 @@ const SECTIONS: LegalSection[] = [
     content: (
       <>
         <p style={{ lineHeight: 1.8, marginBottom: "12px" }}>
-          Vos critères de recherche sont transmis à notre <strong>fournisseur d&apos;IA</strong> pour
+          Vos critères de recherche sont transmis à notre <strong>fournisseur technologique</strong> pour
           générer les résultats. Ce fournisseur est soumis à sa propre politique de confidentialité
           et s&apos;engage à ne pas utiliser vos données à des fins autres que le traitement de votre requête.
         </p>
@@ -215,7 +215,6 @@ export default function ConfidentialitePage() {
       title="Politique de confidentialité"
       description="Découvrez comment AirSearch protège vos données et respecte votre vie privée."
       sections={SECTIONS}
-      currentPath="/confidentialite"
     />
   );
 }

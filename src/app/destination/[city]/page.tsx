@@ -7,8 +7,9 @@ import {
   type Destination,
 } from "@/lib/destinations";
 import SearchForm from "@/components/SearchForm";
-import ThemeToggle from "@/components/ThemeToggle";
+import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/animations";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://airsearch.fr";
 
@@ -174,105 +175,98 @@ export default async function DestinationPage({ params }: PageProps) {
       `}} />
 
       <div className="min-h-screen flex flex-col" style={{ background: "var(--bg)" }}>
-        {/* Header matching homepage */}
-        <header
-          className="w-full flex items-center"
-          style={{
-            background: "var(--surface)",
-            borderBottom: "1px solid var(--border)",
-            position: "sticky",
-            top: 0,
-            zIndex: 100,
-            height: "64px",
-            padding: "0 clamp(24px, 4vw, 48px)",
-          }}
-        >
-          <div className="w-full flex items-center justify-between">
-            {/* Logo */}
-            <Link
-              href="/"
-              className="font-extrabold tracking-tight"
-              aria-label="AirSearch - Accueil"
-              style={{
-                fontFamily: "var(--font-nunito), sans-serif",
-                color: "var(--accent)",
-                letterSpacing: "-0.03em",
-                textDecoration: "none",
-                fontSize: "1.75rem",
-                fontWeight: 900,
-              }}
-            >
-              AirSearch
-            </Link>
-
-            {/* Breadcrumb navigation */}
-            <nav className="hidden md:flex items-center gap-2 text-sm" style={{ color: "var(--text-secondary)" }}>
-              <Link href="/" style={{ textDecoration: "none", color: "var(--text-secondary)" }}>
-                Accueil
-              </Link>
-              <span>/</span>
-              <Link href="/destination" style={{ textDecoration: "none", color: "var(--text-secondary)" }}>
-                Destinations
-              </Link>
-              <span>/</span>
-              <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>{destination.name}</span>
-            </nav>
-
-            {/* Theme Toggle */}
-            <ThemeToggle />
-          </div>
-        </header>
+        <Header />
 
         <main className="w-full">
-          {/* Hero Section */}
-          <section
-            className="w-full"
+          {/* Breadcrumb */}
+          <nav
+            className="flex items-center gap-2 text-sm"
             style={{
-              padding: "clamp(48px, 8vw, 80px) clamp(24px, 4vw, 48px) clamp(32px, 5vw, 56px)",
+              padding: "16px clamp(24px, 4vw, 48px)",
+              color: "var(--text-secondary)",
+              maxWidth: "1120px",
+              margin: "0 auto",
+              width: "100%",
             }}
           >
-            <div style={{ maxWidth: "1120px", margin: "0 auto" }}>
-              <h1
-                className="font-extrabold"
-                style={{
-                  fontFamily: "var(--font-nunito), sans-serif",
-                  color: "var(--text-primary)",
-                  letterSpacing: "-0.03em",
-                  fontSize: "clamp(2.5rem, 6vw, 3.5rem)",
-                  lineHeight: 1.1,
-                  marginBottom: "24px",
-                }}
-              >
-                {destination.h1}
-              </h1>
-              <p
-                style={{
-                  color: "var(--text-secondary)",
-                  fontSize: "clamp(1rem, 2.5vw, 1.25rem)",
-                  lineHeight: 1.6,
-                  marginBottom: "24px",
-                  maxWidth: "800px",
-                }}
-              >
-                {destination.shortDescription}
-              </p>
-              <div
-                className="flex flex-wrap gap-6"
-                style={{ color: "var(--text-secondary)", fontSize: "0.95rem" }}
-              >
-                <div className="flex items-center gap-2">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                  </svg>
-                  <span>{destination.avgPrice}/nuit</span>
+            <Link href="/" style={{ textDecoration: "none", color: "var(--text-secondary)" }}>
+              Accueil
+            </Link>
+            <span style={{ color: "var(--text-tertiary)" }}>/</span>
+            <Link href="/destination" style={{ textDecoration: "none", color: "var(--text-secondary)" }}>
+              Destinations
+            </Link>
+            <span style={{ color: "var(--text-tertiary)" }}>/</span>
+            <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>{destination.name}</span>
+          </nav>
+
+          {/* Hero Section */}
+          <section
+            className="w-full flex items-center justify-center"
+            style={{
+              paddingTop: "clamp(16px, 3vw, 32px)",
+              paddingBottom: "clamp(32px, 5vw, 56px)",
+            }}
+          >
+            <div className="max-w-4xl mx-auto px-6 w-full">
+              <div className="flex flex-col items-center gap-5 sm:gap-6 text-center">
+                <FadeIn delay={0}>
+                  <h1
+                    className="text-4xl sm:text-5xl lg:text-6xl font-extrabold"
+                    style={{
+                      fontFamily: "var(--font-nunito), sans-serif",
+                      color: "var(--text-primary)",
+                      letterSpacing: "-0.03em",
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    Location vacances à{" "}
+                    <span style={{ color: "var(--accent)" }}>{destination.name}</span>
+                  </h1>
+                </FadeIn>
+
+                <FadeIn delay={0.15}>
+                  <p
+                    className="text-lg sm:text-xl mx-auto max-w-2xl"
+                    style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}
+                  >
+                    {destination.shortDescription}
+                  </p>
+                </FadeIn>
+
+                <FadeIn delay={0.3}>
+                <div className="flex items-center gap-6 flex-wrap justify-center">
+                  <div
+                    className="flex items-center gap-2 text-sm"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                    </svg>
+                    {destination.avgPrice}/nuit
+                  </div>
+                  <div
+                    className="flex items-center gap-2 text-sm"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    {destination.bestSeason}
+                  </div>
+                  <div
+                    className="flex items-center gap-2 text-sm"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    {destination.region}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                  <span>{destination.bestSeason}</span>
-                </div>
+                </FadeIn>
               </div>
             </div>
           </section>
@@ -288,34 +282,38 @@ export default async function DestinationPage({ params }: PageProps) {
             }}
           >
             <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-              <div style={{ textAlign: "center", marginBottom: "40px" }}>
-                <h2
-                  className="font-bold"
+              <FadeIn>
+                <div style={{ textAlign: "center", marginBottom: "40px" }}>
+                  <h2
+                    className="font-bold"
+                    style={{
+                      fontFamily: "var(--font-nunito), sans-serif",
+                      color: "var(--text-primary)",
+                      letterSpacing: "-0.02em",
+                      fontSize: "clamp(1.8rem, 4vw, 2.25rem)",
+                      marginBottom: "16px",
+                    }}
+                  >
+                    Trouvez votre location à <span style={{ color: "var(--accent)" }}>{destination.name}</span>
+                  </h2>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: 1.6 }}>
+                    Comparez instantanément les offres Airbnb, Booking.com et Abritel
+                  </p>
+                </div>
+              </FadeIn>
+              <FadeIn delay={0.15}>
+                <div
                   style={{
-                    fontFamily: "var(--font-nunito), sans-serif",
-                    color: "var(--text-primary)",
-                    letterSpacing: "-0.02em",
-                    fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
-                    marginBottom: "16px",
+                    background: "var(--surface)",
+                    borderRadius: "var(--radius-card)",
+                    padding: "clamp(24px, 4vw, 32px)",
+                    boxShadow: "var(--shadow-xl)",
+                    border: "1px solid var(--border)",
                   }}
                 >
-                  Trouvez votre location à {destination.name}
-                </h2>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: 1.6 }}>
-                  Comparez instantanément les offres Airbnb, Booking.com et Abritel
-                </p>
-              </div>
-              <div
-                style={{
-                  background: "var(--surface)",
-                  borderRadius: "var(--radius-card)",
-                  padding: "clamp(24px, 4vw, 32px)",
-                  boxShadow: "var(--shadow-xl)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                <SearchForm defaultLocation={destination.name} />
-              </div>
+                  <SearchForm defaultLocation={destination.name} attractions={destination.attractions} />
+                </div>
+              </FadeIn>
             </div>
           </section>
 
@@ -327,13 +325,15 @@ export default async function DestinationPage({ params }: PageProps) {
             }}
           >
             <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-              <div style={{ color: "var(--text-primary)", fontSize: "1.05rem", lineHeight: 1.8 }}>
-                {destination.introText.split("\n\n").map((paragraph, idx) => (
-                  <p key={idx} style={{ marginBottom: "24px" }}>
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
+              <FadeIn>
+                <div style={{ color: "var(--text-primary)", fontSize: "1.05rem", lineHeight: 1.8 }}>
+                  {destination.introText.split("\n\n").map((paragraph, idx) => (
+                    <p key={idx} style={{ marginBottom: "24px" }}>
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </FadeIn>
             </div>
           </section>
 
@@ -348,31 +348,33 @@ export default async function DestinationPage({ params }: PageProps) {
             }}
           >
             <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-              <div
-                style={{
-                  background: "var(--surface)",
-                  borderRadius: "var(--radius-card)",
-                  border: "1px solid var(--border)",
-                  padding: "clamp(32px, 5vw, 48px)",
-                  boxShadow: "var(--shadow-sm)",
-                }}
-              >
-                <h2
-                  className="font-bold"
+              <FadeIn>
+                <div
                   style={{
-                    fontFamily: "var(--font-nunito), sans-serif",
-                    color: "var(--text-primary)",
-                    letterSpacing: "-0.02em",
-                    fontSize: "clamp(1.5rem, 3vw, 2rem)",
-                    marginBottom: "24px",
+                    background: "var(--surface)",
+                    borderRadius: "var(--radius-card)",
+                    border: "1px solid var(--border)",
+                    padding: "clamp(32px, 5vw, 48px)",
+                    boxShadow: "var(--shadow-sm)",
                   }}
                 >
-                  {destination.whyVisit.title}
-                </h2>
-                <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: 1.7 }}>
-                  {destination.whyVisit.content}
-                </p>
-              </div>
+                  <h2
+                    className="font-bold"
+                    style={{
+                      fontFamily: "var(--font-nunito), sans-serif",
+                      color: "var(--text-primary)",
+                      letterSpacing: "-0.02em",
+                      fontSize: "clamp(1.8rem, 4vw, 2.25rem)",
+                      marginBottom: "24px",
+                    }}
+                  >
+                    {destination.whyVisit.title}
+                  </h2>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", lineHeight: 1.7 }}>
+                    {destination.whyVisit.content}
+                  </p>
+                </div>
+              </FadeIn>
             </div>
           </section>
 
@@ -384,20 +386,23 @@ export default async function DestinationPage({ params }: PageProps) {
             }}
           >
             <div style={{ maxWidth: "1120px", margin: "0 auto" }}>
-              <h2
-                className="font-bold"
-                style={{
-                  fontFamily: "var(--font-nunito), sans-serif",
-                  color: "var(--text-primary)",
-                  letterSpacing: "-0.02em",
-                  fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
-                  marginBottom: "clamp(32px, 5vw, 48px)",
-                  textAlign: "center",
-                }}
-              >
-                Quartiers populaires à {destination.name}
-              </h2>
-              <div
+              <FadeIn>
+                <h2
+                  className="font-bold"
+                  style={{
+                    fontFamily: "var(--font-nunito), sans-serif",
+                    color: "var(--text-primary)",
+                    letterSpacing: "-0.02em",
+                    fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
+                    marginBottom: "clamp(32px, 5vw, 48px)",
+                    textAlign: "center",
+                  }}
+                >
+                  Quartiers populaires à <span style={{ color: "var(--accent)" }}>{destination.name}</span>
+                </h2>
+              </FadeIn>
+              <StaggerContainer
+                staggerDelay={0.12}
                 style={{
                   display: "grid",
                   gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
@@ -405,33 +410,34 @@ export default async function DestinationPage({ params }: PageProps) {
                 }}
               >
                 {destination.popularQuarters.map((quarter) => (
-                  <div
-                    key={quarter.name}
-                    className="quarter-card"
-                    style={{
-                      background: "var(--surface)",
-                      borderRadius: "var(--radius-card)",
-                      border: "1px solid var(--border)",
-                      padding: "32px 24px",
-                      boxShadow: "var(--shadow-sm)",
-                    }}
-                  >
-                    <h3
+                  <StaggerItem key={quarter.name}>
+                    <div
+                      className="quarter-card"
                       style={{
-                        color: "var(--text-primary)",
-                        fontSize: "1.25rem",
-                        fontWeight: 700,
-                        marginBottom: "16px",
+                        background: "var(--surface)",
+                        borderRadius: "var(--radius-card)",
+                        border: "1px solid var(--border)",
+                        padding: "32px 24px",
+                        boxShadow: "var(--shadow-sm)",
                       }}
                     >
-                      {quarter.name}
-                    </h3>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.7 }}>
-                      {quarter.description}
-                    </p>
-                  </div>
+                      <h3
+                        style={{
+                          color: "var(--text-primary)",
+                          fontSize: "1.25rem",
+                          fontWeight: 700,
+                          marginBottom: "16px",
+                        }}
+                      >
+                        {quarter.name}
+                      </h3>
+                      <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.7 }}>
+                        {quarter.description}
+                      </p>
+                    </div>
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerContainer>
             </div>
           </section>
 
@@ -446,20 +452,23 @@ export default async function DestinationPage({ params }: PageProps) {
             }}
           >
             <div style={{ maxWidth: "1120px", margin: "0 auto" }}>
-              <h2
-                className="font-bold"
-                style={{
-                  fontFamily: "var(--font-nunito), sans-serif",
-                  color: "var(--text-primary)",
-                  letterSpacing: "-0.02em",
-                  fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
-                  marginBottom: "clamp(32px, 5vw, 48px)",
-                  textAlign: "center",
-                }}
-              >
-                Attractions incontournables
-              </h2>
-              <div
+              <FadeIn>
+                <h2
+                  className="font-bold"
+                  style={{
+                    fontFamily: "var(--font-nunito), sans-serif",
+                    color: "var(--text-primary)",
+                    letterSpacing: "-0.02em",
+                    fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
+                    marginBottom: "clamp(32px, 5vw, 48px)",
+                    textAlign: "center",
+                  }}
+                >
+                  Attractions incontournables
+                </h2>
+              </FadeIn>
+              <StaggerContainer
+                staggerDelay={0.06}
                 style={{
                   display: "grid",
                   gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
@@ -467,25 +476,26 @@ export default async function DestinationPage({ params }: PageProps) {
                 }}
               >
                 {destination.attractions.map((attraction) => (
-                  <div
-                    key={attraction}
-                    className="attraction-pill"
-                    style={{
-                      background: "var(--surface)",
-                      borderRadius: "var(--radius-card)",
-                      border: "1px solid var(--border)",
-                      padding: "20px 16px",
-                      textAlign: "center",
-                      color: "var(--text-primary)",
-                      fontSize: "0.9rem",
-                      fontWeight: 500,
-                      boxShadow: "var(--shadow-sm)",
-                    }}
-                  >
-                    {attraction}
-                  </div>
+                  <StaggerItem key={attraction}>
+                    <div
+                      className="attraction-pill"
+                      style={{
+                        background: "var(--surface)",
+                        borderRadius: "var(--radius-card)",
+                        border: "1px solid var(--border)",
+                        padding: "20px 16px",
+                        textAlign: "center",
+                        color: "var(--text-primary)",
+                        fontSize: "0.9rem",
+                        fontWeight: 500,
+                        boxShadow: "var(--shadow-sm)",
+                      }}
+                    >
+                      {attraction}
+                    </div>
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerContainer>
             </div>
           </section>
 
@@ -497,6 +507,7 @@ export default async function DestinationPage({ params }: PageProps) {
             }}
           >
             <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+              <FadeIn>
               <div
                 style={{
                   background: "var(--surface)",
@@ -572,6 +583,7 @@ export default async function DestinationPage({ params }: PageProps) {
                   </div>
                 </div>
               </div>
+              </FadeIn>
             </div>
           </section>
 
@@ -579,7 +591,7 @@ export default async function DestinationPage({ params }: PageProps) {
           <section
             className="w-full"
             style={{
-              background: "linear-gradient(135deg, #FF385C 0%, #bd1e59 100%)",
+              background: "var(--accent-gradient)",
               padding: "clamp(56px, 10vw, 96px) clamp(24px, 4vw, 48px)",
             }}
           >
@@ -590,62 +602,68 @@ export default async function DestinationPage({ params }: PageProps) {
                 textAlign: "center",
               }}
             >
-              <h2
-                className="font-bold"
-                style={{
-                  fontFamily: "var(--font-nunito), sans-serif",
-                  color: "#fff",
-                  letterSpacing: "-0.02em",
-                  fontSize: "clamp(2rem, 5vw, 2.5rem)",
-                  marginBottom: "20px",
-                }}
-              >
-                Prêt à découvrir {destination.name} ?
-              </h2>
-              <p
-                style={{
-                  color: "rgba(255, 255, 255, 0.9)",
-                  lineHeight: 1.7,
-                  fontSize: "1.05rem",
-                  marginBottom: "40px",
-                  maxWidth: "540px",
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                }}
-              >
-                Lancez votre recherche et comparez les meilleures offres de location en quelques secondes
-              </p>
-              <Link
-                href="/"
-                className="cta-button"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  padding: "16px 32px",
-                  fontSize: "1rem",
-                  fontWeight: 600,
-                  background: "#fff",
-                  color: "#FF385C",
-                  borderRadius: "var(--radius-full)",
-                  textDecoration: "none",
-                  boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)",
-                }}
-              >
-                Commencer ma recherche
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+              <FadeIn>
+                <h2
+                  className="font-bold"
+                  style={{
+                    fontFamily: "var(--font-nunito), sans-serif",
+                    color: "#fff",
+                    letterSpacing: "-0.02em",
+                    fontSize: "clamp(2rem, 5vw, 2.5rem)",
+                    marginBottom: "20px",
+                  }}
                 >
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </Link>
+                  Prêt à découvrir {destination.name} ?
+                </h2>
+              </FadeIn>
+              <FadeIn delay={0.15}>
+                <p
+                  style={{
+                    color: "rgba(255, 255, 255, 0.9)",
+                    lineHeight: 1.7,
+                    fontSize: "1.05rem",
+                    marginBottom: "40px",
+                    maxWidth: "540px",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                >
+                  Lancez votre recherche et comparez les meilleures offres de location en quelques secondes
+                </p>
+              </FadeIn>
+              <FadeIn delay={0.3}>
+                <Link
+                  href="/"
+                  className="cta-button"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    padding: "16px 32px",
+                    fontSize: "1rem",
+                    fontWeight: 600,
+                    background: "#fff",
+                    color: "var(--accent)",
+                    borderRadius: "var(--radius-full)",
+                    textDecoration: "none",
+                    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
+                  Commencer ma recherche
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </FadeIn>
             </div>
           </section>
         </main>

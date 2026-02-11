@@ -195,7 +195,6 @@ export default function MentionsLegalesPage() {
       title="Mentions légales"
       description="Informations légales relatives au site AirSearch et à son éditeur."
       sections={SECTIONS}
-      currentPath="/mentions-legales"
     />
   );
 }

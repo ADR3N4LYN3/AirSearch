@@ -1,3 +1,36 @@
+// ---------------------------------------------------------------------------
+// Platforms — single source of truth for all route handlers
+// ---------------------------------------------------------------------------
+export const PLATFORMS = [
+  "Airbnb",
+  "Booking.com",
+  "Abritel",
+  "Vrbo",
+  "Expedia",
+  "Hotels.com",
+  "TripAdvisor",
+  "Autre",
+] as const;
+
+export type Platform = (typeof PLATFORMS)[number];
+
+export const ALLOWED_PLATFORMS = new Set<string>(PLATFORMS);
+
+// ---------------------------------------------------------------------------
+// Timeouts (ms)
+// ---------------------------------------------------------------------------
+export const SCRAPE_TIMEOUT_MS = 12_000;
+export const GLOBAL_TIMEOUT_MS = 28_000;
+export const ANTHROPIC_TIMEOUT_MS = 25_000;
+
+// ---------------------------------------------------------------------------
+// Validation limits
+// ---------------------------------------------------------------------------
+export const MAX_STRING_LENGTH = 500;
+
+// ---------------------------------------------------------------------------
+// UI chip data
+// ---------------------------------------------------------------------------
 export interface ChipItemData {
   id: string;
   label: string;

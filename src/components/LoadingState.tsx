@@ -54,7 +54,7 @@ export default function LoadingState() {
             className="text-sm"
             style={{ color: "var(--text-secondary)" }}
           >
-            Notre IA analyse le web pour vous
+            Notre technologie analyse le web pour vous
           </p>
         </div>
 

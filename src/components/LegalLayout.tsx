@@ -1,19 +1,6 @@
-"use client";
-
 import { type ReactNode } from "react";
-import ThemeToggle from "@/components/ThemeToggle";
-
-const NAV_LINKS = [
-  { label: "Fonctionnalités", href: "/#features" },
-  { label: "Comment ça marche", href: "/#how-it-works" },
-  { label: "À propos", href: "/a-propos" },
-];
-
-const FOOTER_LINKS = [
-  { label: "Confidentialité", href: "/confidentialite" },
-  { label: "Conditions", href: "/conditions" },
-  { label: "Mentions légales", href: "/mentions-legales" },
-];
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 export interface LegalSection {
   icon: ReactNode;
@@ -26,7 +13,6 @@ interface LegalLayoutProps {
   title: string;
   description: string;
   sections: LegalSection[];
-  currentPath: string;
 }
 
 export default function LegalLayout({
@@ -34,58 +20,10 @@ export default function LegalLayout({
   title,
   description,
   sections,
-  currentPath,
 }: LegalLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--bg)" }}>
-      {/* Header */}
-      <header
-        className="w-full flex items-center"
-        style={{
-          background: "var(--surface)",
-          borderBottom: "1px solid var(--border)",
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-          height: "64px",
-          padding: "0 clamp(24px, 4vw, 48px)",
-        }}
-      >
-        <div className="w-full flex items-center justify-between">
-          <a
-            href="/"
-            className="font-extrabold tracking-tight"
-            aria-label="AirSearch - Accueil"
-            style={{
-              fontFamily: "var(--font-nunito), sans-serif",
-              color: "var(--accent)",
-              letterSpacing: "-0.03em",
-              textDecoration: "none",
-              fontSize: "1.75rem",
-              fontWeight: 900,
-            }}
-          >
-            AirSearch
-          </a>
-          <nav
-            className="hidden md:flex items-center gap-6"
-            aria-label="Navigation principale"
-            style={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}
-          >
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium transition-colors hover-nav-link"
-                style={{ color: "var(--text-secondary)", textDecoration: "none" }}
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-          <ThemeToggle />
-        </div>
-      </header>
+      <Header />
 
       {/* Hero */}
       <section
@@ -186,36 +124,7 @@ export default function LegalLayout({
         </div>
       </section>
 
-      {/* Footer */}
-      <footer
-        style={{
-          background: "var(--bg-secondary)",
-          borderTop: "1px solid var(--border)",
-          padding: "24px clamp(16px, 4vw, 32px)",
-          textAlign: "center",
-        }}
-      >
-        <div
-          className="flex flex-col sm:flex-row items-center justify-between gap-3"
-          style={{ maxWidth: "800px", margin: "0 auto" }}
-        >
-          <div style={{ color: "var(--text-tertiary)", fontSize: "13px" }}>
-            &copy; {new Date().getFullYear()} AirSearch
-          </div>
-          <div className="flex items-center gap-4" style={{ fontSize: "13px" }}>
-            {FOOTER_LINKS.filter((link) => link.href !== currentPath).map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="transition-colors"
-                style={{ color: "var(--text-secondary)", textDecoration: "none" }}
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

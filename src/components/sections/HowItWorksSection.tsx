@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/animations";
 
 interface Step {
   number: string;
@@ -29,9 +32,9 @@ const STEPS: Step[] = [
         <path d="M10 22h4" />
       </svg>
     ),
-    title: "Notre IA compare en temps réel",
+    title: "Notre technologie compare en temps réel",
     description:
-      "L'IA analyse simultanément Airbnb, Booking.com et Abritel pour trouver les meilleures offres correspondant à vos critères.",
+      "Notre technologie analyse simultanément Airbnb, Booking.com et Abritel pour trouver les meilleures offres correspondant à vos critères.",
   },
   {
     number: "03",
@@ -54,37 +57,40 @@ export default function HowItWorksSection() {
       style={{ padding: "clamp(48px, 8vw, 80px) clamp(16px, 4vw, 32px)" }}
     >
       <div style={{ maxWidth: "1120px", margin: "0 auto" }}>
-        <div style={{ marginBottom: "clamp(32px, 5vw, 64px)", textAlign: "center", width: "100%" }}>
-          <h2
-            style={{
-              fontFamily: "var(--font-nunito), sans-serif",
-              color: "var(--text-primary)",
-              letterSpacing: "-0.02em",
-              fontSize: "clamp(2rem, 5vw, 2.5rem)",
-              fontWeight: 700,
-              marginBottom: "16px",
-              textAlign: "center",
-            }}
-          >
-            Comment ça marche ?
-          </h2>
-          <p
-            style={{
-              color: "var(--text-secondary)",
-              lineHeight: 1.7,
-              fontSize: "1.05rem",
-              maxWidth: "600px",
-              marginLeft: "auto",
-              marginRight: "auto",
-              textAlign: "center",
-              width: "100%",
-            }}
-          >
-            Trois étapes simples pour trouver votre prochain logement de vacances.
-          </p>
-        </div>
+        <FadeIn>
+          <div style={{ marginBottom: "clamp(32px, 5vw, 64px)", textAlign: "center", width: "100%" }}>
+            <h2
+              style={{
+                fontFamily: "var(--font-nunito), sans-serif",
+                color: "var(--text-primary)",
+                letterSpacing: "-0.02em",
+                fontSize: "clamp(2rem, 5vw, 2.5rem)",
+                fontWeight: 700,
+                marginBottom: "16px",
+                textAlign: "center",
+              }}
+            >
+              Comment ça marche ?
+            </h2>
+            <p
+              style={{
+                color: "var(--text-secondary)",
+                lineHeight: 1.7,
+                fontSize: "1.05rem",
+                maxWidth: "600px",
+                marginLeft: "auto",
+                marginRight: "auto",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              Trois étapes simples pour trouver votre prochain logement de vacances.
+            </p>
+          </div>
+        </FadeIn>
 
-        <div
+        <StaggerContainer
+          staggerDelay={0.15}
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
@@ -92,79 +98,80 @@ export default function HowItWorksSection() {
           }}
         >
           {STEPS.map((step, i) => (
-            <div
-              key={i}
-              className="feature-card"
-              style={{
-                background: "var(--surface)",
-                borderRadius: "var(--radius-card)",
-                border: "1px solid var(--border)",
-                padding: "32px 24px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center",
-                gap: "20px",
-                transition: "all 0.2s ease",
-                position: "relative",
-              }}
-            >
+            <StaggerItem key={i}>
               <div
+                className="feature-card"
                 style={{
-                  position: "absolute",
-                  top: "16px",
-                  right: "16px",
-                  fontFamily: "var(--font-nunito), sans-serif",
-                  color: "var(--accent)",
-                  opacity: 0.3,
-                  letterSpacing: "-0.04em",
-                  fontSize: "2.5rem",
-                  fontWeight: 900,
-                  lineHeight: 1,
-                }}
-              >
-                {step.number}
-              </div>
-
-              <div
-                style={{
-                  width: "64px",
-                  height: "64px",
-                  borderRadius: "16px",
-                  background: "var(--accent-light)",
+                  background: "var(--surface)",
+                  borderRadius: "var(--radius-card)",
+                  border: "1px solid var(--border)",
+                  padding: "32px 24px",
                   display: "flex",
+                  flexDirection: "column",
                   alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
+                  textAlign: "center",
+                  gap: "20px",
+                  transition: "all 0.2s ease",
+                  position: "relative",
                 }}
               >
-                {step.icon}
-              </div>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "16px",
+                    right: "16px",
+                    fontFamily: "var(--font-nunito), sans-serif",
+                    color: "var(--accent)",
+                    opacity: 0.3,
+                    letterSpacing: "-0.04em",
+                    fontSize: "2.5rem",
+                    fontWeight: 900,
+                    lineHeight: 1,
+                  }}
+                >
+                  {step.number}
+                </div>
 
-              <h3
-                style={{
-                  color: "var(--text-primary)",
-                  letterSpacing: "-0.01em",
-                  fontSize: "1.25rem",
-                  fontWeight: 700,
-                  margin: 0,
-                }}
-              >
-                {step.title}
-              </h3>
-              <p
-                style={{
-                  color: "var(--text-secondary)",
-                  fontSize: "0.95rem",
-                  lineHeight: 1.7,
-                  margin: 0,
-                }}
-              >
-                {step.description}
-              </p>
-            </div>
+                <div
+                  style={{
+                    width: "64px",
+                    height: "64px",
+                    borderRadius: "16px",
+                    background: "var(--accent-light)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  {step.icon}
+                </div>
+
+                <h3
+                  style={{
+                    color: "var(--text-primary)",
+                    letterSpacing: "-0.01em",
+                    fontSize: "1.25rem",
+                    fontWeight: 700,
+                    margin: 0,
+                  }}
+                >
+                  {step.title}
+                </h3>
+                <p
+                  style={{
+                    color: "var(--text-secondary)",
+                    fontSize: "0.95rem",
+                    lineHeight: 1.7,
+                    margin: 0,
+                  }}
+                >
+                  {step.description}
+                </p>
+              </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

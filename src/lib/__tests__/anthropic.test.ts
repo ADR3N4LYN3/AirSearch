@@ -102,12 +102,18 @@ describe('callAnthropic', () => {
   it('should handle API errors gracefully', async () => {
     vi.stubEnv('ANTHROPIC_API_KEY', 'sk-ant-test123');
 
-    (global.fetch as any).mockResolvedValueOnce({
+    const error500 = {
       ok: false,
       status: 500,
       headers: new Map([['request-id', 'req-123']]),
       text: async () => 'Internal Server Error',
-    });
+    };
+
+    // Mock all 3 attempts (initial + 2 retries) to return 500
+    (global.fetch as any)
+      .mockResolvedValueOnce(error500)
+      .mockResolvedValueOnce(error500)
+      .mockResolvedValueOnce(error500);
 
     const result = await callAnthropic('test');
 

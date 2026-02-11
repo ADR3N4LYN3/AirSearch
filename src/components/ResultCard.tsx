@@ -109,14 +109,16 @@ export default function ResultCard({ result, index }: ResultCardProps) {
 
         {/* Platform badge */}
         <span
-          className="absolute top-3 left-3 px-2.5 py-1 text-xs font-semibold"
+          className="absolute top-3 left-3 font-bold"
           style={{
             background: platformStyle.bg,
             color: platformStyle.text,
-            borderRadius: "6px",
-            fontSize: "11px",
-            letterSpacing: "0.02em",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.15)",
+            padding: "6px 14px",
+            borderRadius: "var(--radius-input)",
+            fontSize: "0.7rem",
+            letterSpacing: "0.03em",
+            textTransform: "uppercase",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
           }}
         >
           {result.platform}
@@ -169,21 +171,25 @@ export default function ResultCard({ result, index }: ResultCardProps) {
       </div>
 
       {/* Content */}
-      <div style={{ padding: "16px 20px 20px 20px" }}>
+      <div className="flex flex-col items-center text-center" style={{ padding: "16px 20px 20px 20px" }}>
         {/* Location + Price Row */}
-        <div className="flex items-start justify-between gap-3 mb-2">
+        <div className="flex items-start justify-between gap-3 mb-2 w-full">
           <div className="flex-1 min-w-0">
             <h3
-              className="text-base font-semibold truncate mb-1"
+              className="text-base font-semibold mb-1"
               style={{
                 color: "var(--text-primary)",
                 letterSpacing: "-0.01em",
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical" as const,
+                overflow: "hidden",
               }}
             >
               {result.title}
             </h3>
             <p
-              className="text-sm flex items-center gap-1.5 truncate"
+              className="text-sm flex items-center gap-1.5"
               style={{ color: "var(--text-secondary)" }}
             >
               <svg
@@ -205,12 +211,13 @@ export default function ResultCard({ result, index }: ResultCardProps) {
           </div>
 
           {/* Price */}
-          <div className="shrink-0 text-right">
+          <div className="shrink-0 text-right" style={{ maxWidth: "45%" }}>
             <span
               className="text-base font-bold block"
               style={{
                 color: "var(--text-primary)",
                 letterSpacing: "-0.01em",
+                wordBreak: "break-word",
               }}
             >
               {result.price}
@@ -256,10 +263,14 @@ export default function ResultCard({ result, index }: ResultCardProps) {
 
         {/* Description */}
         <p
-          className="text-sm leading-relaxed mb-3 line-clamp-2"
+          className="text-sm leading-relaxed mb-3 w-full"
           style={{
             color: "var(--text-secondary)",
             lineHeight: 1.6,
+            display: "-webkit-box",
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: "vertical" as const,
+            overflow: "hidden",
           }}
         >
           {result.description}
@@ -267,7 +278,7 @@ export default function ResultCard({ result, index }: ResultCardProps) {
 
         {/* Highlights — Airbnb amenity pills */}
         {result.highlights && result.highlights.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-4">
+          <div className="flex flex-wrap justify-center gap-1.5 mb-4 w-full">
             {result.highlights.slice(0, 4).map((highlight, i) => (
               <span
                 key={i}
@@ -305,22 +316,17 @@ export default function ResultCard({ result, index }: ResultCardProps) {
             href={affiliateUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm font-semibold transition-all"
+            className="inline-flex items-center gap-2 font-semibold transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
             style={{
-              color: platformStyle.bg,
+              color: "#fff",
               textDecoration: "none",
-              padding: "6px 12px",
-              borderRadius: "8px",
-              border: `1.5px solid ${platformStyle.bg}`,
-              background: "transparent",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = platformStyle.bg;
-              e.currentTarget.style.color = platformStyle.text;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.color = platformStyle.bg;
+              marginTop: "8px",
+              padding: "10px 20px",
+              fontSize: "0.85rem",
+              borderRadius: "var(--radius-full)",
+              border: "none",
+              background: platformStyle.bg,
+              boxShadow: `0 4px 12px ${platformStyle.bg}40`,
             }}
             onClick={handleAffiliateClick}
           >
@@ -331,7 +337,7 @@ export default function ResultCard({ result, index }: ResultCardProps) {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             >

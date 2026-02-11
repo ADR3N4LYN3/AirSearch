@@ -1,5 +1,3 @@
-"use client";
-
 export default function Footer() {
   return (
     <footer
@@ -50,7 +48,7 @@ export default function Footer() {
               }}
             >
               Recherche intelligente de locations de vacances propulsée par
-              l&apos;intelligence artificielle. Trouvez le logement parfait en
+              notre technologie intelligente. Trouvez le logement parfait en
               quelques secondes.
             </p>
           </div>

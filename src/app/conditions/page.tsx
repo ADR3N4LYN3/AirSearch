@@ -29,8 +29,8 @@ const SECTIONS: LegalSection[] = [
     content: (
       <>
         <p style={{ lineHeight: 1.8, marginBottom: "12px" }}>
-          AirSearch est un moteur de recherche intelligent propulsé par l&apos;intelligence
-          artificielle qui aide les utilisateurs à trouver des logements de vacances sur
+          AirSearch est un moteur de recherche intelligent propulsé par une technologie
+          intelligente qui aide les utilisateurs à trouver des logements de vacances sur
           différentes plateformes (Airbnb, Booking.com, etc.).
         </p>
         <p style={{ lineHeight: 1.8 }}>
@@ -144,7 +144,6 @@ export default function ConditionsPage() {
       title="Conditions d'utilisation"
       description="Règles et conditions encadrant l'utilisation du service AirSearch."
       sections={SECTIONS}
-      currentPath="/conditions"
     />
   );
 }

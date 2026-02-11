@@ -20,7 +20,7 @@ const AFFILIATE_CONFIGS: Record<string, AffiliateConfig> = {
   "Booking.com": {
     id: "booking",
     paramName: "aid",
-    paramValue: process.env.NEXT_PUBLIC_BOOKING_AFFILIATE_ID || "YOUR_BOOKING_AFFILIATE_ID",
+    paramValue: process.env.NEXT_PUBLIC_BOOKING_AFFILIATE_ID || "",
     trackingParams: {
       // Booking.com utilise plusieurs paramètres
       // aid = Affiliate ID
@@ -30,7 +30,7 @@ const AFFILIATE_CONFIGS: Record<string, AffiliateConfig> = {
   "Vrbo": {
     id: "vrbo",
     paramName: "affiliateId",
-    paramValue: process.env.NEXT_PUBLIC_VRBO_AFFILIATE_ID || "YOUR_VRBO_AFFILIATE_ID",
+    paramValue: process.env.NEXT_PUBLIC_VRBO_AFFILIATE_ID || "",
     trackingParams: {
       // Vrbo (groupe Expedia) utilise affiliateId
     }
@@ -38,13 +38,13 @@ const AFFILIATE_CONFIGS: Record<string, AffiliateConfig> = {
   "Expedia": {
     id: "expedia",
     paramName: "affiliateId",
-    paramValue: process.env.NEXT_PUBLIC_EXPEDIA_AFFILIATE_ID || "YOUR_EXPEDIA_AFFILIATE_ID",
+    paramValue: process.env.NEXT_PUBLIC_EXPEDIA_AFFILIATE_ID || "",
     trackingParams: {}
   },
   "Hotels.com": {
     id: "hotelscom",
     paramName: "affiliateId",
-    paramValue: process.env.NEXT_PUBLIC_HOTELSCOM_AFFILIATE_ID || "YOUR_HOTELSCOM_AFFILIATE_ID",
+    paramValue: process.env.NEXT_PUBLIC_HOTELSCOM_AFFILIATE_ID || "",
     trackingParams: {}
   }
   // Note : Airbnb (fermé 2021) et Abritel (invitation uniquement)
@@ -59,8 +59,8 @@ export function addAffiliateParams(url: string | null, platform: string): string
   if (!url) return null;
 
   const config = AFFILIATE_CONFIGS[platform];
-  if (!config) {
-    // Plateformes sans programme d'affiliation (Airbnb fermé 2021, Abritel sur invitation)
+  if (!config || !config.paramValue) {
+    // No affiliate config or ID not configured — return URL as-is
     return url;
   }
 

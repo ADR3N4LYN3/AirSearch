@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "AirSearch - Trouvez le logement idéal avec l'IA";
+export const alt = "AirSearch - Trouvez le logement idéal intelligemment";
 export const size = {
   width: 1200,
   height: 630,
@@ -101,7 +101,7 @@ export default async function Image() {
               fontWeight: 500,
             }}
           >
-            Trouvez le logement idéal avec l&apos;IA
+            Trouvez le logement idéal intelligemment
           </div>
 
           {/* Badge */}
@@ -132,7 +132,7 @@ export default async function Image() {
                 fontWeight: 600,
               }}
             >
-              Recherche intelligente par IA
+              Recherche intelligente
             </span>
           </div>
         </div>

@@ -43,7 +43,7 @@ services:
     networks:
       - airsearch-network
     healthcheck:
-      test: ["CMD", "nginx", "-t"]
+      test: ["CMD-SHELL", "wget -qO /dev/null http://localhost/nginx-health || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3

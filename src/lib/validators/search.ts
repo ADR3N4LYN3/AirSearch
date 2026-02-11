@@ -4,7 +4,7 @@ import type { SearchRequest } from "../types";
 const SAFE_TEXT_REGEX = /^[\p{L}\p{N}\s\-,.'()]+$/u;
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
-function sanitizeText(input: string): string {
+export function sanitizeText(input: string): string {
   // Strip control characters and zero-width chars
   return input.replace(/[\x00-\x1F\x7F\u200B-\u200F\u2028-\u202F]/g, "").trim();
 }
@@ -28,6 +28,10 @@ export function validateSearchRequest(
   }
   if (destination.length > 200) {
     return { valid: false, error: "Le champ 'destination' ne doit pas dépasser 200 caractères." };
+  }
+  // Anti-SSRF: reject anything that looks like a URL
+  if (/(:\/\/|^https?|^ftp|^file|^www\.)/i.test(destination)) {
+    return { valid: false, error: "Le champ 'destination' contient des caractères non autorisés." };
   }
   if (!SAFE_TEXT_REGEX.test(destination)) {
     return { valid: false, error: "Le champ 'destination' contient des caractères non autorisés." };

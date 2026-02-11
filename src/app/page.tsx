@@ -3,15 +3,21 @@ import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
 import FeaturesSection from "@/components/sections/FeaturesSection";
 import HowItWorksSection from "@/components/sections/HowItWorksSection";
-import DestinationsSection from "@/components/sections/DestinationsSection";
+
 import CTASection from "@/components/sections/CTASection";
 import SearchForm from "@/components/SearchForm";
+import CloudBackground from "@/components/CloudBackground";
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--bg)" }}>
       <Header />
-      <HeroSection />
+
+      {/* Hero with cloud background */}
+      <div className="relative overflow-hidden" style={{ minHeight: "280px" }}>
+        <CloudBackground />
+        <HeroSection />
+      </div>
 
       {/* Search Form Section */}
       <section
@@ -37,7 +43,6 @@ export default function Home() {
 
       <FeaturesSection />
       <HowItWorksSection />
-      <DestinationsSection />
       <CTASection />
       <Footer />
     </div>

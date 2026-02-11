@@ -6,13 +6,11 @@ services:
       - "3100:3000"
     env_file:
       - .env
-    environment:
-      - NODE_ENV=production
     deploy:
       resources:
         limits:
           cpus: '1.0'
-          memory: 1G
+          memory: 1.5G
         reservations:
           cpus: '0.25'
           memory: 256M

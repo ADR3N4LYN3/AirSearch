@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/animations";
 
 interface Feature {
   icon: ReactNode;
@@ -16,7 +19,7 @@ const FEATURES: Feature[] = [
     ),
     title: "Recherche intelligente",
     description:
-      "Décrivez simplement ce que vous cherchez en langage naturel. Notre IA comprend vos préférences et trouve les meilleurs logements.",
+      "Décrivez simplement ce que vous cherchez en langage naturel. Notre technologie comprend vos préférences et trouve les meilleurs logements.",
   },
   {
     icon: (
@@ -67,38 +70,40 @@ export default function FeaturesSection() {
       }}
     >
       <div style={{ maxWidth: "1120px", margin: "0 auto" }}>
-        <div style={{ marginBottom: "clamp(32px, 5vw, 64px)", textAlign: "center", width: "100%" }}>
-          <h2
-            style={{
-              fontFamily: "var(--font-nunito), sans-serif",
-              color: "var(--text-primary)",
-              letterSpacing: "-0.02em",
-              fontSize: "clamp(2rem, 5vw, 2.5rem)",
-              fontWeight: 700,
-              marginBottom: "16px",
-              textAlign: "center",
-            }}
-          >
-            Pourquoi AirSearch ?
-          </h2>
-          <p
-            style={{
-              color: "var(--text-secondary)",
-              lineHeight: 1.7,
-              fontSize: "1.05rem",
-              maxWidth: "600px",
-              marginLeft: "auto",
-              marginRight: "auto",
-              textAlign: "center",
-              width: "100%",
-            }}
-          >
-            Fini les heures passées à comparer les annonces. Laissez
-            l&apos;intelligence artificielle faire le travail pour vous.
-          </p>
-        </div>
+        <FadeIn>
+          <div style={{ marginBottom: "clamp(32px, 5vw, 64px)", textAlign: "center", width: "100%" }}>
+            <h2
+              style={{
+                fontFamily: "var(--font-nunito), sans-serif",
+                color: "var(--text-primary)",
+                letterSpacing: "-0.02em",
+                fontSize: "clamp(2rem, 5vw, 2.5rem)",
+                fontWeight: 700,
+                marginBottom: "16px",
+                textAlign: "center",
+              }}
+            >
+              Pourquoi AirSearch ?
+            </h2>
+            <p
+              style={{
+                color: "var(--text-secondary)",
+                lineHeight: 1.7,
+                fontSize: "1.05rem",
+                maxWidth: "600px",
+                marginLeft: "auto",
+                marginRight: "auto",
+                textAlign: "center",
+                width: "100%",
+              }}
+            >
+              Fini les heures passées à comparer les annonces. Laissez
+              la technologie faire le travail pour vous.
+            </p>
+          </div>
+        </FadeIn>
 
-        <div
+        <StaggerContainer
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
@@ -106,60 +111,61 @@ export default function FeaturesSection() {
           }}
         >
           {FEATURES.map((feature, i) => (
-            <div
-              key={i}
-              className="feature-card"
-              style={{
-                background: "var(--surface)",
-                borderRadius: "var(--radius-card)",
-                border: "1px solid var(--border)",
-                padding: "32px 24px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "16px",
-                transition: "all 0.2s ease",
-                textAlign: "center",
-              }}
-            >
+            <StaggerItem key={i}>
               <div
+                className="feature-card"
                 style={{
-                  width: "56px",
-                  height: "56px",
-                  borderRadius: "14px",
-                  background: "var(--accent-light)",
+                  background: "var(--surface)",
+                  borderRadius: "var(--radius-card)",
+                  border: "1px solid var(--border)",
+                  padding: "32px 24px",
                   display: "flex",
+                  flexDirection: "column",
                   alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
+                  gap: "16px",
+                  transition: "all 0.2s ease",
+                  textAlign: "center",
                 }}
               >
-                {feature.icon}
+                <div
+                  style={{
+                    width: "56px",
+                    height: "56px",
+                    borderRadius: "14px",
+                    background: "var(--accent-light)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  {feature.icon}
+                </div>
+                <h3
+                  style={{
+                    color: "var(--text-primary)",
+                    letterSpacing: "-0.01em",
+                    fontSize: "1.1rem",
+                    fontWeight: 600,
+                    margin: 0,
+                  }}
+                >
+                  {feature.title}
+                </h3>
+                <p
+                  style={{
+                    color: "var(--text-secondary)",
+                    fontSize: "0.95rem",
+                    lineHeight: 1.7,
+                    margin: 0,
+                  }}
+                >
+                  {feature.description}
+                </p>
               </div>
-              <h3
-                style={{
-                  color: "var(--text-primary)",
-                  letterSpacing: "-0.01em",
-                  fontSize: "1.1rem",
-                  fontWeight: 600,
-                  margin: 0,
-                }}
-              >
-                {feature.title}
-              </h3>
-              <p
-                style={{
-                  color: "var(--text-secondary)",
-                  fontSize: "0.95rem",
-                  lineHeight: 1.7,
-                  margin: 0,
-                }}
-              >
-                {feature.description}
-              </p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

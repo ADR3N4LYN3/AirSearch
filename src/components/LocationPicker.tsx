@@ -48,6 +48,7 @@ export default function LocationPicker({
   const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
   const placesService = useRef<google.maps.places.PlacesService | null>(null);
   const sessionToken = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const defaultCenter = { lat: lat ?? 48.8566, lng: lng ?? 2.3522 };
 
@@ -64,6 +65,12 @@ export default function LocationPicker({
   useEffect(() => {
     if (mapLoaded) initServices();
   }, [mapLoaded, initServices]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -157,7 +164,8 @@ export default function LocationPicker({
   const handleInputChange = useCallback(
     (value: string) => {
       onDestinationChange(value);
-      fetchPredictions(value);
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+      debounceTimer.current = setTimeout(() => fetchPredictions(value), 300);
     },
     [onDestinationChange, fetchPredictions]
   );

@@ -42,8 +42,8 @@ export async function POST(request: NextRequest) {
 
   const searchRequest = validation.data;
 
-  // --- Scraping + Claude analysis (with fallback to web_search) ---
-  const GLOBAL_TIMEOUT_MS = 28_000;
+  // --- Scraping + AI analysis (with fallback to web_search) ---
+  const GLOBAL_TIMEOUT_MS = 55_000;
 
   const operationPromise = (async () => {
     let result;

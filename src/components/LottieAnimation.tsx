@@ -5,7 +5,10 @@ import type { ComponentProps } from "react";
 
 const DotLottieReact = dynamic(
   () =>
-    import("@lottiefiles/dotlottie-react").then((mod) => mod.DotLottieReact),
+    import("@lottiefiles/dotlottie-react").then((mod) => {
+      mod.setWasmUrl("/dotlottie-player.wasm");
+      return mod.DotLottieReact;
+    }),
   { ssr: false }
 );
 

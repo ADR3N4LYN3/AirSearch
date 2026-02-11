@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import type { SearchRequest, SearchResponse } from "@/lib/types";
 import { AMENITIES, PROPERTY_TYPES } from "@/lib/constants-ui";
 import {
@@ -12,6 +12,7 @@ import {
   FileText,
   AlertCircle,
   Search,
+  Landmark,
 } from "lucide-react";
 import ChipSelect from "./ChipSelect";
 import LoadingState from "./LoadingState";
@@ -25,9 +26,10 @@ const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? "";
 
 interface SearchFormProps {
   defaultLocation?: string;
+  attractions?: string[];
 }
 
-export default function SearchForm({ defaultLocation = "" }: SearchFormProps) {
+export default function SearchForm({ defaultLocation = "", attractions = [] }: SearchFormProps) {
   // Form fields
   const [destination, setDestination] = useState(defaultLocation);
   const [checkin, setCheckin] = useState("");
@@ -40,6 +42,7 @@ export default function SearchForm({ defaultLocation = "" }: SearchFormProps) {
   const [propertyTypes, setPropertyTypes] = useState<string[]>([]);
   const [amenities, setAmenities] = useState<string[]>([]);
   const [extraNotes, setExtraNotes] = useState("");
+  const [selectedAttractions, setSelectedAttractions] = useState<string[]>([]);
   const [lat, setLat] = useState<number | undefined>(undefined);
   const [lng, setLng] = useState<number | undefined>(undefined);
   const [radius, setRadius] = useState(10);
@@ -48,6 +51,7 @@ export default function SearchForm({ defaultLocation = "" }: SearchFormProps) {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<SearchResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const formRef = useRef<HTMLElement>(null);
 
   const handlePropertyTypeToggle = (id: string) => {
     setPropertyTypes((prev) =>
@@ -61,10 +65,20 @@ export default function SearchForm({ defaultLocation = "" }: SearchFormProps) {
     );
   };
 
+  const handleAttractionToggle = (id: string) => {
+    setSelectedAttractions((prev) =>
+      prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
+    );
+  };
+
   const handleLocationChange = useCallback((newLat: number, newLng: number) => {
     setLat(newLat);
     setLng(newLng);
   }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,6 +91,12 @@ export default function SearchForm({ defaultLocation = "" }: SearchFormProps) {
     setError(null);
     setLoading(true);
     setResults(null);
+    scrollToTop();
+
+    const attractionsNote = selectedAttractions.length > 0
+      ? `Proche des attractions : ${selectedAttractions.join(", ")}`
+      : "";
+    const combinedNotes = [attractionsNote, extraNotes.trim()].filter(Boolean).join(". ");
 
     const payload: SearchRequest = {
       destination: destination.trim(),
@@ -89,7 +109,7 @@ export default function SearchForm({ defaultLocation = "" }: SearchFormProps) {
       budgetMax,
       propertyType: propertyTypes.length > 0 ? propertyTypes : undefined,
       amenities,
-      extraNotes: extraNotes.trim() || undefined,
+      extraNotes: combinedNotes || undefined,
       lat,
       lng,
       radius,
@@ -123,25 +143,52 @@ export default function SearchForm({ defaultLocation = "" }: SearchFormProps) {
     setError(null);
   };
 
-  if (loading) return <LoadingState />;
-  if (results?.data) return <ResultsList data={results.data} onReset={handleReset} />;
+  if (loading) return <div ref={formRef as React.RefObject<HTMLDivElement>}><LoadingState /></div>;
+  if (results?.data) return <div ref={formRef as React.RefObject<HTMLDivElement>}><ResultsList data={results.data} onReset={handleReset} /></div>;
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col" style={{ gap: 0 }}>
+    <form ref={formRef as React.RefObject<HTMLFormElement>} onSubmit={handleSubmit} className="flex flex-col" style={{ gap: 0 }}>
       {/* Error banner */}
       {error && (
         <div
-          className="animate-fade-in flex items-center gap-2.5 text-sm px-4 py-3"
+          className="animate-fade-in"
           style={{
-            background: "rgba(255, 56, 92, 0.06)",
-            border: "1px solid rgba(255, 56, 92, 0.2)",
-            borderRadius: "var(--radius-input)",
-            color: "var(--accent)",
+            background: "linear-gradient(135deg, rgba(255,56,92,0.04) 0%, rgba(255,56,92,0.08) 100%)",
+            border: "1px solid rgba(255,56,92,0.12)",
+            borderRadius: "var(--radius-card)",
+            padding: "20px 24px",
             marginBottom: "24px",
+            boxShadow: "0 2px 12px rgba(255,56,92,0.06)",
           }}
         >
-          <AlertCircle size={18} style={{ flexShrink: 0 }} />
-          {error}
+          <div className="flex items-start gap-4">
+            <div
+              className="flex items-center justify-center"
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: "var(--radius-card)",
+                background: "var(--accent-gradient)",
+                flexShrink: 0,
+              }}
+            >
+              <AlertCircle size={20} color="white" />
+            </div>
+            <div className="flex flex-col gap-1" style={{ paddingTop: 2 }}>
+              <span
+                className="text-sm font-semibold"
+                style={{ color: "var(--text-primary)" }}
+              >
+                Oups, quelque chose s&apos;est mal passé
+              </span>
+              <span
+                className="text-sm"
+                style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}
+              >
+                {error}
+              </span>
+            </div>
+          </div>
         </div>
       )}
 
@@ -254,9 +301,31 @@ export default function SearchForm({ defaultLocation = "" }: SearchFormProps) {
         <ChipSelect items={AMENITIES} selected={amenities} onToggle={handleAmenityToggle} multi />
       </section>
 
+      {/* SECTION 6: Attractions (conditional) */}
+      {attractions.length > 0 && (
+        <>
+          <div style={{ height: "1px", background: "var(--border)", margin: "0 0 28px 0" }} />
+          <section style={{ paddingBottom: "28px" }}>
+            <h3
+              className="flex items-center gap-2 text-sm font-semibold"
+              style={{ color: "var(--text-primary)", marginBottom: "16px" }}
+            >
+              <Landmark size={18} color="var(--text-primary)" />
+              Attractions à proximité
+            </h3>
+            <ChipSelect
+              items={attractions.map((a) => ({ id: a, label: a, icon: "📍" }))}
+              selected={selectedAttractions}
+              onToggle={handleAttractionToggle}
+              multi
+            />
+          </section>
+        </>
+      )}
+
       <div style={{ height: "1px", background: "var(--border)", margin: "0 0 28px 0" }} />
 
-      {/* SECTION 6: Notes */}
+      {/* SECTION 7: Notes */}
       <section style={{ paddingBottom: "32px" }}>
         <h3
           className="flex items-center gap-2 text-sm font-semibold"

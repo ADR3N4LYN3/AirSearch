@@ -94,9 +94,9 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
-  verification: {
-    google: "your-google-verification-code",
-  },
+  ...(process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION
+    ? { verification: { google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION } }
+    : {}),
 };
 
 export default function RootLayout({

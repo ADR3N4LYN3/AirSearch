@@ -48,6 +48,9 @@
   --radius-button: 8px;
   --radius-full: 9999px;
 
+  /* Cloud sky */
+  --cloud-sky: #dbeafe;
+
   /* Transitions */
   --transition-fast: 0.15s ease;
   --transition-normal: 0.25s ease;
@@ -99,6 +102,9 @@
   --shadow-xl: 0 8px 28px rgba(0, 0, 0, 0.6);
   --shadow-card: 0 6px 20px rgba(0, 0, 0, 0.4);
   --shadow-card-hover: 0 8px 28px rgba(0, 0, 0, 0.7);
+
+  /* Cloud sky */
+  --cloud-sky: #1e293b;
 }
 
 /* ============================================

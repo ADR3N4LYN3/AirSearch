@@ -239,7 +239,7 @@ export default function NotFound() {
               fontFamily: "var(--font-nunito), sans-serif",
               fontSize: "clamp(5rem, 15vw, 10rem)",
               fontWeight: 800,
-              color: "#FF385C",
+              color: "var(--accent)",
               lineHeight: 1,
               textShadow: "0 4px 20px rgba(255,56,92,0.25)",
               letterSpacing: "-0.04em",
@@ -268,7 +268,7 @@ export default function NotFound() {
               fontFamily: "var(--font-nunito), sans-serif",
               fontSize: "clamp(5rem, 15vw, 10rem)",
               fontWeight: 800,
-              color: "#FF385C",
+              color: "var(--accent)",
               lineHeight: 1,
               textShadow: "0 4px 20px rgba(255,56,92,0.25)",
               letterSpacing: "-0.04em",
@@ -324,7 +324,7 @@ export default function NotFound() {
             height="18"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#FF385C"
+            stroke="var(--accent)"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"

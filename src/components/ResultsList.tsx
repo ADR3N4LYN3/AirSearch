@@ -13,8 +13,8 @@ export default function ResultsList({ data, onReset }: ResultsListProps) {
 
   return (
     <div className="flex flex-col gap-8 animate-fade-in w-full">
-      {/* Results Header — clean Airbnb style */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b" style={{ borderColor: "var(--border)" }}>
+      {/* Results Header */}
+      <div className="flex flex-col items-center gap-4 text-center">
         <div>
           <h2
             className="text-xl sm:text-2xl font-semibold mb-1"
@@ -34,25 +34,27 @@ export default function ResultsList({ data, onReset }: ResultsListProps) {
         <button
           type="button"
           onClick={onReset}
-          className="px-4 py-2 text-sm font-medium transition-all duration-200"
+          className="inline-flex items-center gap-2.5 cursor-pointer transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
           style={{
-            background: "transparent",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius-button)",
-            color: "var(--text-primary)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = "var(--text-primary)";
-            e.currentTarget.style.background = "var(--bg-secondary)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "var(--border)";
-            e.currentTarget.style.background = "transparent";
+            padding: "16px 32px",
+            fontSize: "1rem",
+            fontWeight: 600,
+            background: "var(--accent-gradient)",
+            color: "#fff",
+            border: "none",
+            borderRadius: "var(--radius-full)",
+            boxShadow: "0 6px 20px rgba(255, 56, 92, 0.3)",
           }}
         >
           Nouvelle recherche
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
         </button>
       </div>
+
+      <div style={{ height: "1px", background: "var(--border)" }} />
 
       {/* Summary Card — clean with left accent */}
       <div

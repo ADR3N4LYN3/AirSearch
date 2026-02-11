@@ -4,8 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 
 const NAV_LINKS = [
-  { label: "Fonctionnalités", href: "#features" },
-  { label: "Comment ça marche", href: "#how-it-works" },
+  { label: "Accueil", href: "/" },
+  { label: "Destinations", href: "/destination" },
+  { label: "Fonctionnalités", href: "/#features" },
+  { label: "Comment ça marche", href: "/#how-it-works" },
   { label: "À propos", href: "/a-propos" },
 ];
 

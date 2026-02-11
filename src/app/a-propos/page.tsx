@@ -16,7 +16,7 @@ const SECTIONS: LegalSection[] = [
         AirSearch facilite la recherche de locations de vacances en comparant automatiquement
         les meilleures plateformes du marché : Airbnb, Booking.com et Abritel. Notre mission
         est de vous faire gagner du temps et de l&apos;argent en centralisant votre recherche
-        en un seul endroit, propulsé par l&apos;intelligence artificielle.
+        en un seul endroit, propulsé par notre technologie intelligente.
       </p>
     ),
   },
@@ -38,7 +38,7 @@ const SECTIONS: LegalSection[] = [
         <ul style={{ paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <li><strong>Neutre et indépendant</strong> : Nous ne favorisons aucune plateforme. Les résultats sont basés uniquement sur vos critères.</li>
           <li><strong>100% gratuit</strong> : Aucune commission, aucun frais caché. Notre service est entièrement gratuit pour vous.</li>
-          <li><strong>Alimenté par l&apos;IA Claude</strong> : Notre moteur de recherche utilise l&apos;IA la plus avancée pour comprendre vos besoins et trouver les meilleures options.</li>
+          <li><strong>Technologie avancée</strong> : Notre moteur de recherche utilise les algorithmes les plus avancés pour comprendre vos besoins et trouver les meilleures options.</li>
           <li><strong>Rapide et simple</strong> : En quelques clics, obtenez une sélection personnalisée de logements sans perdre des heures à chercher.</li>
         </ul>
       </>
@@ -59,9 +59,9 @@ const SECTIONS: LegalSection[] = [
           de recherche possible :
         </p>
         <ul style={{ paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-          <li><strong>Intelligence artificielle</strong> : Notre IA Claude analyse votre recherche en langage naturel et comprend précisément ce que vous cherchez.</li>
+          <li><strong>Intelligence artificielle</strong> : Notre algorithme analyse votre recherche en langage naturel et comprend précisément ce que vous cherchez.</li>
           <li><strong>Recherche en temps réel</strong> : Nous interrogeons plusieurs plateformes simultanément pour vous garantir les informations les plus à jour.</li>
-          <li><strong>Analyse comparative</strong> : L&apos;IA compare les prix, les équipements, les avis et la localisation pour vous présenter les meilleures options.</li>
+          <li><strong>Analyse comparative</strong> : Notre technologie compare les prix, les équipements, les avis et la localisation pour vous présenter les meilleures options.</li>
           <li><strong>Recommandations personnalisées</strong> : Recevez des conseils adaptés à votre destination, votre budget et vos préférences.</li>
         </ul>
       </>
@@ -99,7 +99,7 @@ const SECTIONS: LegalSection[] = [
     content: (
       <p style={{ lineHeight: 1.8 }}>
         AirSearch est en constante évolution. Nous travaillons continuellement à améliorer notre
-        service en ajoutant de nouvelles plateformes, en affinant notre IA et en développant
+        service en ajoutant de nouvelles plateformes, en affinant nos algorithmes et en développant
         de nouvelles fonctionnalités pour rendre votre recherche encore plus simple et efficace.
         Votre feedback nous aide à progresser, n&apos;hésitez pas à nous contacter pour partager
         vos suggestions.
@@ -137,7 +137,6 @@ export default function AProposPage() {
       title="À propos d'AirSearch"
       description="Découvrez notre mission, notre technologie et notre engagement à simplifier votre recherche de location de vacances."
       sections={SECTIONS}
-      currentPath="/a-propos"
     />
   );
 }
