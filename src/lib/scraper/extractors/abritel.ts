@@ -8,6 +8,7 @@ export async function extractAbritel(page: Page): Promise<ScrapedListing[]> {
     const listings: Array<{
       title: string; price: string | null; rating: number | null;
       reviewCount: number | null; url: string | null; location: string | null;
+      image: string | null;
     }> = [];
 
     const cards = document.querySelectorAll('[data-test="PROPERTY_LISTING"], .HitCollection__hit');
@@ -16,6 +17,7 @@ export async function extractAbritel(page: Page): Promise<ScrapedListing[]> {
       const priceEl = card.querySelector('[data-test="price-summary"], .HitCollection__hit__price') as HTMLElement | null;
       const ratingEl = card.querySelector('[data-test="guest-rating"], [aria-label*="note"]') as HTMLElement | null;
       const linkEl = card.querySelector('a[href*="/location-vacances/"], a[href*="/p/"]') as HTMLAnchorElement | null;
+      const imgEl = card.querySelector('img[data-test="property-image"], img') as HTMLImageElement | null;
 
       const title = titleEl?.textContent?.trim() || "";
       if (!title) return;
@@ -38,6 +40,8 @@ export async function extractAbritel(page: Page): Promise<ScrapedListing[]> {
         url = linkEl.href.startsWith("http") ? linkEl.href : `https://www.abritel.fr${linkEl.getAttribute("href")}`;
       }
 
+      const image = imgEl?.src || null;
+
       listings.push({
         title,
         price,
@@ -45,6 +49,7 @@ export async function extractAbritel(page: Page): Promise<ScrapedListing[]> {
         reviewCount,
         url,
         location: null,
+        image,
       });
     });
 

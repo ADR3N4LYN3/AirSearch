@@ -15,7 +15,7 @@ export function buildAnalysisPrompt(
     `L'utilisateur cherche un logement avec les critères suivants :\n`
   );
 
-  parts.push(...formatCriteria(criteria));
+  parts.push(...formatCriteria(criteria, { includeGeo: false }));
 
   // Inject scraped data
   parts.push("");
@@ -45,8 +45,9 @@ export function buildAnalysisPrompt(
   }
 
   parts.push("");
-  parts.push(`À partir de ces ${totalListings} annonces RÉELLES, sélectionne les 3 à 5 meilleures qui correspondent aux critères.`);
+  parts.push(`À partir de ces ${totalListings} annonces RÉELLES, sélectionne EXACTEMENT 5 annonces (ou toutes si moins de 5 disponibles).`);
   parts.push(`Privilégie les annonces avec de bonnes notes et un bon rapport qualité/prix.`);
+  parts.push(`NE FILTRE PAS par distance géographique — toutes les annonces fournies sont déjà dans la zone recherchée.`);
   parts.push(`RÈGLES STRICTES :`);
   parts.push(`- Le champ "price" DOIT reprendre le prix EXACT des données scrapées (ex: "85€/nuit"). Si le prix indique "NON DISPONIBLE", mets "Prix non disponible".`);
   parts.push(`- Ne JAMAIS inventer un prix. Utilise uniquement les données fournies ci-dessus.`);

@@ -80,6 +80,7 @@ export function mapApiResponse(rawText: string): SearchResponse {
               ? r.highlights.map(String)
               : [],
             url,
+            image: null,
             platform: r.platform ? String(r.platform) : detectPlatform(url),
             rating,
             reviewCount,

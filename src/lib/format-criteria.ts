@@ -5,7 +5,8 @@ import { AMENITIES, PROPERTY_TYPES } from "./constants";
  * Format search criteria into human-readable lines for prompt construction.
  * Shared between anthropic prompt builder and scraper analysis prompt.
  */
-export function formatCriteria(criteria: SearchRequest): string[] {
+export function formatCriteria(criteria: SearchRequest, options?: { includeGeo?: boolean }): string[] {
+  const includeGeo = options?.includeGeo ?? true;
   const parts: string[] = [];
 
   parts.push(`- Destination : ${criteria.destination}`);
@@ -54,7 +55,7 @@ export function formatCriteria(criteria: SearchRequest): string[] {
     parts.push(`- Équipements souhaités : ${labels}`);
   }
 
-  if (criteria.lat !== undefined && criteria.lng !== undefined) {
+  if (includeGeo && criteria.lat !== undefined && criteria.lng !== undefined) {
     parts.push(`- Coordonnées GPS : ${criteria.lat.toFixed(4)}, ${criteria.lng.toFixed(4)}`);
     if (criteria.radius) {
       parts.push(`- Rayon de recherche : ${criteria.radius} km autour de ce point`);

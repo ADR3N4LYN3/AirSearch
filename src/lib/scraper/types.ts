@@ -10,6 +10,7 @@ export interface ScrapedListing {
   reviewCount: number | null;
   url: string | null;
   location: string | null;
+  image: string | null;
   platform: "Airbnb" | "Booking.com" | "Abritel";
 }
 

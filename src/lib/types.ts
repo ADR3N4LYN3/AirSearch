@@ -22,6 +22,7 @@ export interface SearchResult {
   description: string;
   highlights: string[];
   url: string | null;
+  image: string | null;
   platform: string;
   rating: number | null;
   reviewCount: number | null;

@@ -8,6 +8,7 @@ export async function extractAirbnb(page: Page): Promise<ScrapedListing[]> {
     const listings: Array<{
       title: string; price: string | null; rating: number | null;
       reviewCount: number | null; url: string | null; location: string | null;
+      image: string | null;
     }> = [];
 
     const cards = document.querySelectorAll('[itemprop="itemListElement"], [data-testid="card-container"]');
@@ -19,6 +20,7 @@ export async function extractAirbnb(page: Page): Promise<ScrapedListing[]> {
       const ratingEl = card.querySelector('[aria-label*="note"], [aria-label*="rating"]') as HTMLElement | null;
       const linkEl = card.querySelector('a[href*="/rooms/"]') as HTMLAnchorElement | null;
       const locationEl = card.querySelector('[data-testid="listing-card-subtitle"]') as HTMLElement | null;
+      const imgEl = card.querySelector('img[data-original-uri], img[src*="muscache"], img[src*="airbnb"]') as HTMLImageElement | null;
 
       const title = (titleEl?.getAttribute("content") || titleEl?.textContent || "").trim();
       if (!title) return;
@@ -41,6 +43,8 @@ export async function extractAirbnb(page: Page): Promise<ScrapedListing[]> {
         url = linkEl.href.startsWith("http") ? linkEl.href : `https://www.airbnb.fr${linkEl.getAttribute("href")}`;
       }
 
+      const image = imgEl?.getAttribute("data-original-uri") || imgEl?.src || null;
+
       listings.push({
         title,
         price,
@@ -48,6 +52,7 @@ export async function extractAirbnb(page: Page): Promise<ScrapedListing[]> {
         reviewCount,
         url,
         location: locationEl?.textContent?.trim() || null,
+        image,
       });
     });
 

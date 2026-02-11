@@ -1,8 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildSearchPrompt, callAnthropic } from "@/lib/anthropic";
 import { buildSearchUrls, scrapeAllPlatforms, buildAnalysisPrompt } from "@/lib/scraper";
+import type { ScrapeResult } from "@/lib/scraper/types";
+import type { SearchResponse } from "@/lib/types";
 import { getClientIp, isRateLimited } from "@/lib/rate-limiter";
 import { validateSearchRequest } from "@/lib/validators/search";
+
+function normalize(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9àâäéèêëïîôùûüÿçœæ]/g, "");
+}
+
+function injectScrapedImages(result: SearchResponse, scrapeResults: ScrapeResult[]): void {
+  if (!result.success || !result.data) return;
+
+  // Build multiple lookup maps for robust matching
+  const byTitlePlatform = new Map<string, string>();
+  const byTitle = new Map<string, string>();
+  const byNormTitle = new Map<string, string>();
+  const byUrl = new Map<string, string>();
+
+  for (const sr of scrapeResults) {
+    for (const l of sr.listings) {
+      if (!l.image) continue;
+      byTitlePlatform.set(`${l.title}::${sr.platform}`, l.image);
+      byTitle.set(l.title, l.image);
+      byNormTitle.set(normalize(l.title), l.image);
+      if (l.url) byUrl.set(l.url, l.image);
+    }
+  }
+
+  for (const r of result.data.results) {
+    r.image =
+      byTitlePlatform.get(`${r.title}::${r.platform}`) ||
+      byTitle.get(r.title) ||
+      (r.url ? byUrl.get(r.url) : null) ||
+      byNormTitle.get(normalize(r.title)) ||
+      null;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // POST /api/search
@@ -63,6 +98,7 @@ export async function POST(request: NextRequest) {
         );
         const analysisPrompt = buildAnalysisPrompt(searchRequest, scrapeResults);
         result = await callAnthropic(analysisPrompt, { useTools: false, timeout: 40000 });
+        injectScrapedImages(result, scrapeResults);
       } else {
         console.log("[Search] Scraping returned 0 listings, falling back to web_search");
         const prompt = buildSearchPrompt(searchRequest);

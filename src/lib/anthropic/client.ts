@@ -26,8 +26,9 @@ export async function callAnthropic(
 
   try {
     const body: Record<string, unknown> = {
-      model: "claude-sonnet-4-20250514",
+      model: useTools ? "claude-sonnet-4-20250514" : "claude-haiku-4-5-20251001",
       max_tokens: useTools ? 5000 : 2000,
+      temperature: useTools ? 1 : 0.3,
       messages: [{ role: "user", content: prompt }],
     };
 
@@ -87,6 +88,10 @@ export async function callAnthropic(
     }
 
     const data = await response.json();
+
+    if (data.stop_reason === "max_tokens") {
+      console.warn("[Anthropic API] Response truncated (max_tokens reached)");
+    }
 
     // Extract text blocks from the multi-block response
     const textBlocks: string[] = [];

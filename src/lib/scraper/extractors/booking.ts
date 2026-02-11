@@ -8,6 +8,7 @@ export async function extractBooking(page: Page): Promise<ScrapedListing[]> {
     const listings: Array<{
       title: string; price: string | null; rating: number | null;
       reviewCount: number | null; url: string | null; location: string | null;
+      image: string | null;
     }> = [];
 
     const cards = document.querySelectorAll('[data-testid="property-card"]');
@@ -20,6 +21,7 @@ export async function extractBooking(page: Page): Promise<ScrapedListing[]> {
       const reviewCountEl = card.querySelector('[data-testid="review-score"] .abf093bdfe, .d8eab2cf7f') as HTMLElement | null;
       const linkEl = card.querySelector('a[data-testid="title-link"], a[data-testid="property-card-desktop-single-image"]') as HTMLAnchorElement | null;
       const locationEl = card.querySelector('[data-testid="address"], .f4bd0794db') as HTMLElement | null;
+      const imgEl = card.querySelector('img[data-testid="image"], img.hotel_image, img[src*="bstatic"]') as HTMLImageElement | null;
 
       const title = titleEl?.textContent?.trim() || "";
       if (!title) return;
@@ -46,6 +48,8 @@ export async function extractBooking(page: Page): Promise<ScrapedListing[]> {
       let url: string | null = null;
       if (linkEl) url = linkEl.href;
 
+      const image = imgEl?.src || null;
+
       listings.push({
         title,
         price,
@@ -53,6 +57,7 @@ export async function extractBooking(page: Page): Promise<ScrapedListing[]> {
         reviewCount,
         url,
         location: locationEl?.textContent?.trim() || null,
+        image,
       });
     });
 
