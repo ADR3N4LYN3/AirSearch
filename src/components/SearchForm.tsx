@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
-import type { SearchRequest, SearchResponse } from "@/lib/types";
+import type { SearchRequest } from "@/lib/types";
 import { AMENITIES, PROPERTY_TYPES } from "@/lib/constants-ui";
 import {
   MapPin,
@@ -18,9 +18,11 @@ import {
 import ChipSelect from "./ChipSelect";
 import LoadingState from "./LoadingState";
 import ResultsList from "./ResultsList";
+import ErrorState from "./ErrorState";
 import DatePicker from "./DatePicker";
 import GuestSection from "./search-form/GuestSection";
 import BudgetSection from "./search-form/BudgetSection";
+import { useSearchStream } from "@/hooks/useSearchStream";
 
 const LocationPicker = dynamic(() => import("./LocationPicker"), { ssr: false });
 
@@ -49,10 +51,11 @@ export default function SearchForm({ defaultLocation = "", attractions = [] }: S
   const [lng, setLng] = useState<number | undefined>(undefined);
   const [radius, setRadius] = useState(10);
 
-  // UI state
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<SearchResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // Validation error (form-level, separate from stream errors)
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  // SSE stream
+  const { state, startSearch, reset } = useSearchStream();
   const formRef = useRef<HTMLElement>(null);
 
   const handlePropertyTypeToggle = useCallback((id: string) => {
@@ -82,25 +85,20 @@ export default function SearchForm({ defaultLocation = "", attractions = [] }: S
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const buildPayload = useCallback((): SearchRequest | null => {
     if (!destination.trim()) {
-      setError("Veuillez indiquer une destination.");
-      return;
+      setValidationError("Veuillez indiquer une destination.");
+      return null;
     }
 
-    setError(null);
-    setLoading(true);
-    setResults(null);
-    scrollToTop();
+    setValidationError(null);
 
     const attractionsNote = selectedAttractions.length > 0
       ? `Proche des attractions : ${selectedAttractions.join(", ")}`
       : "";
     const combinedNotes = [attractionsNote, extraNotes.trim()].filter(Boolean).join(". ");
 
-    const payload: SearchRequest = {
+    return {
       destination: destination.trim(),
       checkin: checkin || undefined,
       checkout: checkout || undefined,
@@ -116,43 +114,58 @@ export default function SearchForm({ defaultLocation = "", attractions = [] }: S
       lng,
       radius,
     };
+  }, [destination, selectedAttractions, extraNotes, checkin, checkout, adults, children, infants, budgetMin, budgetMax, propertyTypes, amenities, lat, lng, radius]);
 
-    try {
-      const res = await fetch("/api/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+  const handleSubmit = useCallback((e?: React.FormEvent) => {
+    if (e) e.preventDefault();
 
-      const data: SearchResponse = await res.json();
+    const payload = buildPayload();
+    if (!payload) return;
 
-      if (!res.ok || !data.success) {
-        setError(data.error || "Une erreur est survenue lors de la recherche.");
-        setLoading(false);
-        return;
-      }
+    scrollToTop();
+    startSearch(payload);
+  }, [buildPayload, scrollToTop, startSearch]);
 
-      setResults(data);
-    } catch (error) {
-      console.error("[SearchForm] Search request failed:", error);
-      setError("Impossible de contacter le serveur. Réessayez plus tard.");
-    } finally {
-      setLoading(false);
-    }
-  }, [destination, selectedAttractions, extraNotes, checkin, checkout, adults, children, infants, budgetMin, budgetMax, propertyTypes, amenities, lat, lng, radius, scrollToTop]);
+  const handleReset = useCallback(() => {
+    reset();
+    setValidationError(null);
+  }, [reset]);
 
-  const handleReset = () => {
-    setResults(null);
-    setError(null);
-  };
+  const handleRetry = useCallback(() => {
+    handleSubmit();
+  }, [handleSubmit]);
 
-  if (loading) return <div ref={formRef as React.RefObject<HTMLDivElement>}><LoadingState /></div>;
-  if (results?.data) return <div ref={formRef as React.RefObject<HTMLDivElement>}><ResultsList data={results.data} onReset={handleReset} /></div>;
+  // Render loading state
+  if (state.status === "connecting" || state.status === "streaming") {
+    return (
+      <div ref={formRef as React.RefObject<HTMLDivElement>}>
+        <LoadingState progress={state.progress} />
+      </div>
+    );
+  }
+
+  // Render results
+  if (state.status === "done" && state.result?.data) {
+    return (
+      <div ref={formRef as React.RefObject<HTMLDivElement>}>
+        <ResultsList data={state.result.data} onReset={handleReset} />
+      </div>
+    );
+  }
+
+  // Render error state (full-page)
+  if (state.status === "error") {
+    return (
+      <div ref={formRef as React.RefObject<HTMLDivElement>}>
+        <ErrorState error={state.error} onRetry={handleRetry} onReset={handleReset} />
+      </div>
+    );
+  }
 
   return (
     <form ref={formRef as React.RefObject<HTMLFormElement>} onSubmit={handleSubmit} className="flex flex-col" style={{ gap: 0 }}>
       {/* Error banner */}
-      {error && (
+      {validationError && (
         <div
           className="animate-fade-in"
           style={{
@@ -188,7 +201,7 @@ export default function SearchForm({ defaultLocation = "", attractions = [] }: S
                 className="text-sm"
                 style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}
               >
-                {error}
+                {validationError}
               </span>
             </div>
           </div>

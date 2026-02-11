@@ -15,6 +15,47 @@ import { SCRAPE_TIMEOUT_MS } from "@/lib/constants";
 chromium.use(StealthPlugin());
 
 // ---------------------------------------------------------------------------
+// Platform-specific configuration
+// ---------------------------------------------------------------------------
+const PLATFORM_CONFIG: Record<string, { waitUntil: "domcontentloaded" | "networkidle"; timeout: number }> = {
+  "Booking.com": { waitUntil: "networkidle", timeout: 15000 },
+  "Expedia": { waitUntil: "networkidle", timeout: 15000 },
+  "Hotels.com": { waitUntil: "networkidle", timeout: 15000 },
+};
+
+const DEFAULT_PLATFORM_CONFIG = { waitUntil: "domcontentloaded" as const, timeout: SCRAPE_TIMEOUT_MS };
+
+// ---------------------------------------------------------------------------
+// Platform health tracking
+// ---------------------------------------------------------------------------
+const platformHealth = new Map<string, { success: number; fail: number; lastFailTime: number }>();
+const HEALTH_COOLDOWN_MS = 30 * 60 * 1000; // 30 min
+const HEALTH_FAIL_THRESHOLD = 5;
+
+function recordPlatformResult(platform: string, success: boolean): void {
+  const entry = platformHealth.get(platform) ?? { success: 0, fail: 0, lastFailTime: 0 };
+  if (success) {
+    entry.success++;
+    entry.fail = 0; // Reset consecutive fail counter on success
+  } else {
+    entry.fail++;
+    entry.lastFailTime = Date.now();
+  }
+  platformHealth.set(platform, entry);
+}
+
+function isPlatformHealthy(platform: string): boolean {
+  const entry = platformHealth.get(platform);
+  if (!entry) return true;
+  if (entry.fail >= HEALTH_FAIL_THRESHOLD && Date.now() - entry.lastFailTime < HEALTH_COOLDOWN_MS) {
+    const total = entry.success + entry.fail;
+    console.log(`[Scraper] Skipping ${platform} — ${entry.fail} consecutive failures (${entry.success}/${total} success rate). Cooldown until ${new Date(entry.lastFailTime + HEALTH_COOLDOWN_MS).toISOString()}`);
+    return false;
+  }
+  return true;
+}
+
+// ---------------------------------------------------------------------------
 // Browser singleton (with shared promise to prevent race conditions)
 // ---------------------------------------------------------------------------
 let browserInstance: Browser | null = null;
@@ -178,7 +219,8 @@ async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise
       "Accept-Language": "fr-FR,fr;q=0.9",
     });
 
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: SCRAPE_TIMEOUT_MS });
+    const config = PLATFORM_CONFIG[platform] ?? DEFAULT_PLATFORM_CONFIG;
+    await page.goto(url, { waitUntil: config.waitUntil, timeout: config.timeout });
 
     const extractor = EXTRACTORS[platform];
     let listings: ScrapedListing[] = [];
@@ -195,10 +237,13 @@ async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise
       console.warn(`[Scraper] ${platform}: 0 listings found. Selectors may have failed for URL: ${url}`);
     }
 
-    return { platform, success: listings.length > 0, listings };
+    const success = listings.length > 0;
+    recordPlatformResult(platform, success);
+    return { platform, success, listings };
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     console.error(`[Scraper] ${platform} failed: ${msg}`);
+    recordPlatformResult(platform, false);
     return { platform, success: false, listings: [], error: msg };
   } finally {
     browserInUse--;
@@ -206,36 +251,66 @@ async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise
   }
 }
 
-export async function scrapeAllPlatforms(urls: PlatformUrl[]): Promise<ScrapeResult[]> {
+export async function scrapeAllPlatforms(
+  urls: PlatformUrl[],
+  onProgress?: (platform: string, success: boolean, listingCount: number) => void,
+): Promise<ScrapeResult[]> {
   try {
     const browser = await getBrowser();
 
+    // Filter out unhealthy platforms
+    const healthyUrls = urls.filter((u) => isPlatformHealthy(u.platform));
+    const skippedUrls = urls.filter((u) => !isPlatformHealthy(u.platform));
+
+    // Report skipped platforms immediately
+    const skippedResults: ScrapeResult[] = skippedUrls.map((u) => {
+      const result: ScrapeResult = {
+        platform: u.platform,
+        success: false,
+        listings: [],
+        error: "Skipped (health cooldown)",
+      };
+      onProgress?.(u.platform, false, 0);
+      return result;
+    });
+
     const results = await Promise.allSettled(
-      urls.map((u) => scrapeSingle(browser, u))
+      healthyUrls.map(async (u) => {
+        const result = await scrapeSingle(browser, u);
+        onProgress?.(result.platform, result.success, result.listings.length);
+        return result;
+      })
     );
 
     const mapped = results.map((r, i) => {
       if (r.status === "fulfilled") return r.value;
-      return {
-        platform: urls[i].platform,
+      const fallback: ScrapeResult = {
+        platform: healthyUrls[i].platform,
         success: false,
-        listings: [] as ScrapedListing[],
+        listings: [],
         error: r.reason?.message || "Scrape failed",
       };
+      onProgress?.(fallback.platform, false, 0);
+      return fallback;
     });
 
-    for (const r of mapped) {
+    const allResults = [...skippedResults, ...mapped];
+
+    for (const r of allResults) {
       console.log(`[Scraper] ${r.platform}: ${r.success ? r.listings.length + ' listings' : 'FAILED - ' + r.error}`);
     }
 
-    return mapped;
+    return allResults;
   } catch (error) {
     console.error("[Scraper] Browser launch failed:", error instanceof Error ? error.message : error);
-    return urls.map((u) => ({
-      platform: u.platform,
-      success: false,
-      listings: [],
-      error: "Browser unavailable",
-    }));
+    return urls.map((u) => {
+      onProgress?.(u.platform, false, 0);
+      return {
+        platform: u.platform,
+        success: false,
+        listings: [],
+        error: "Browser unavailable",
+      };
+    });
   }
 }

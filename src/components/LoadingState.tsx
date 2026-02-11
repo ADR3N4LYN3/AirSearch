@@ -10,15 +10,32 @@ const ROTATING_TEXTS = [
   "Sélection des meilleures options...",
 ];
 
-export default function LoadingState() {
+const STAGE_LABELS: Record<string, string> = {
+  scraping: "Analyse des plateformes...",
+  websearch: "Recherche web IA...",
+  analyzing: "Analyse des résultats...",
+};
+
+interface LoadingStateProps {
+  progress?: {
+    stage: string;
+    message: string;
+    percent: number;
+  } | null;
+}
+
+export default function LoadingState({ progress }: LoadingStateProps) {
   const [textIndex, setTextIndex] = useState(0);
 
   useEffect(() => {
+    if (progress) return;
     const interval = setInterval(() => {
       setTextIndex((prev) => (prev + 1) % ROTATING_TEXTS.length);
     }, 2500);
     return () => clearInterval(interval);
-  }, []);
+  }, [progress]);
+
+  const hasProgress = progress != null;
 
   return (
     <div
@@ -72,45 +89,83 @@ export default function LoadingState() {
             background: "var(--bg-secondary)",
           }}
         >
-          <div
-            className="absolute inset-0"
-            style={{
-              background: "var(--accent)",
-              width: "60%",
-              borderRadius: "var(--radius-chip)",
-              animation: "progress 2s ease-in-out infinite",
-            }}
-          />
+          {hasProgress ? (
+            <div
+              style={{
+                background: "var(--accent)",
+                width: `${progress.percent}%`,
+                height: "100%",
+                borderRadius: "var(--radius-chip)",
+                transition: "width 0.5s ease",
+              }}
+            />
+          ) : (
+            <div
+              className="absolute inset-0"
+              style={{
+                background: "var(--accent)",
+                width: "60%",
+                borderRadius: "var(--radius-chip)",
+                animation: "progress 2s ease-in-out infinite",
+              }}
+            />
+          )}
         </div>
 
-        {/* Rotating status text */}
-        <p
-          key={textIndex}
-          className="text-sm animate-fade-in"
-          style={{
-            color: "var(--text-secondary)",
-            fontWeight: 500,
-            height: "20px",
-          }}
-        >
-          {ROTATING_TEXTS[textIndex]}
-        </p>
+        {/* Status text */}
+        {hasProgress ? (
+          <div className="flex flex-col items-center gap-1">
+            <p
+              className="text-sm animate-fade-in"
+              style={{
+                color: "var(--text-primary)",
+                fontWeight: 500,
+                height: "20px",
+              }}
+            >
+              {progress.message}
+            </p>
+            <p
+              className="text-xs"
+              style={{
+                color: "var(--text-secondary)",
+                fontWeight: 400,
+              }}
+            >
+              {STAGE_LABELS[progress.stage] || progress.stage}
+            </p>
+          </div>
+        ) : (
+          <p
+            key={textIndex}
+            className="text-sm animate-fade-in"
+            style={{
+              color: "var(--text-secondary)",
+              fontWeight: 500,
+              height: "20px",
+            }}
+          >
+            {ROTATING_TEXTS[textIndex]}
+          </p>
+        )}
       </div>
 
-      {/* Progress bar keyframes */}
-      <style jsx>{`
-        @keyframes progress {
-          0% {
-            transform: translateX(-100%);
+      {/* Progress bar keyframes (only needed for fallback animation) */}
+      {!hasProgress && (
+        <style jsx>{`
+          @keyframes progress {
+            0% {
+              transform: translateX(-100%);
+            }
+            50% {
+              transform: translateX(100%);
+            }
+            100% {
+              transform: translateX(200%);
+            }
           }
-          50% {
-            transform: translateX(100%);
-          }
-          100% {
-            transform: translateX(200%);
-          }
-        }
-      `}</style>
+        `}</style>
+      )}
     </div>
   );
 }

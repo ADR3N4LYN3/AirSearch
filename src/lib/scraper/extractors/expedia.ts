@@ -66,6 +66,30 @@ export async function extractExpedia(page: Page): Promise<ScrapedListing[]> {
       });
     });
 
+    // JSON-LD fallback when CSS selectors return 0 results
+    if (listings.length === 0) {
+      const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+      for (const script of scripts) {
+        try {
+          const data = JSON.parse(script.textContent || "");
+          const items = data["@type"] === "ItemList" ? (data.itemListElement || []) :
+                        Array.isArray(data) ? data : [data];
+          for (const item of items) {
+            if (!item.name) continue;
+            listings.push({
+              title: item.name,
+              price: item.offers?.price ? `${item.offers.price}€` : null,
+              rating: item.aggregateRating?.ratingValue ? parseFloat(item.aggregateRating.ratingValue) : null,
+              reviewCount: item.aggregateRating?.reviewCount ? parseInt(item.aggregateRating.reviewCount) : null,
+              url: item.url || null,
+              location: item.address?.addressLocality || null,
+              image: (Array.isArray(item.image) ? item.image[0] : item.image) || null,
+            });
+          }
+        } catch { /* ignore malformed JSON-LD */ }
+      }
+    }
+
     return listings.slice(0, 8);
   }).then((items: Array<Omit<ScrapedListing, "platform">>) =>
     items.map((item) => ({ ...item, platform: "Expedia" as const }))
