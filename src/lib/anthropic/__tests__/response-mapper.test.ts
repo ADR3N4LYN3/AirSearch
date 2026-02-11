@@ -216,7 +216,7 @@ describe("mapApiResponse", () => {
     expect(res.success).toBe(true);
     expect(res.data?.results[0].title).toBe("Sans titre");
     expect(res.data?.results[0].location).toBe("Localisation inconnue");
-    expect(res.data?.results[0].price).toBe("Prix non spécifié");
+    expect(res.data?.results[0].price).toBe("Prix non disponible");
     expect(res.data?.results[0].highlights).toEqual([]);
   });
 });
