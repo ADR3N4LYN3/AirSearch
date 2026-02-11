@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
           `[Search] Scraped ${totalListings} listings from ${scrapeResults.filter((r) => r.success).length}/3 platforms`
         );
         const analysisPrompt = buildAnalysisPrompt(searchRequest, scrapeResults);
-        result = await callAnthropic(analysisPrompt, { useTools: false, timeout: 25000 });
+        result = await callAnthropic(analysisPrompt, { useTools: false, timeout: 40000 });
       } else {
         console.log("[Search] Scraping returned 0 listings, falling back to web_search");
         const prompt = buildSearchPrompt(searchRequest);

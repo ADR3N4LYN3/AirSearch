@@ -59,7 +59,7 @@ const SECTIONS: LegalSection[] = [
           de recherche possible :
         </p>
         <ul style={{ paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-          <li><strong>Intelligence artificielle</strong> : Notre algorithme analyse votre recherche en langage naturel et comprend précisément ce que vous cherchez.</li>
+          <li><strong>Technologie avancée</strong> : Notre algorithme analyse votre recherche en langage naturel et comprend précisément ce que vous cherchez.</li>
           <li><strong>Recherche en temps réel</strong> : Nous interrogeons plusieurs plateformes simultanément pour vous garantir les informations les plus à jour.</li>
           <li><strong>Analyse comparative</strong> : Notre technologie compare les prix, les équipements, les avis et la localisation pour vous présenter les meilleures options.</li>
           <li><strong>Recommandations personnalisées</strong> : Recevez des conseils adaptés à votre destination, votre budget et vos préférences.</li>

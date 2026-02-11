@@ -41,6 +41,15 @@ export function detectPlatform(url: string | null): string {
   return "Autre";
 }
 
+function normalizePriceDisplay(raw: unknown): string {
+  if (!raw) return "Prix non disponible";
+  const s = String(raw).trim();
+  // If the price contains a number + currency symbol, it's valid
+  if (/\d+.*[€$£]/.test(s) || /[€$£].*\d+/.test(s)) return s;
+  // "Prix non disponible", "Prix non communiqué", etc. → standardize
+  return "Prix non disponible";
+}
+
 /**
  * Map raw API text response into a structured SearchResponse.
  */
@@ -65,7 +74,7 @@ export function mapApiResponse(rawText: string): SearchResponse {
           return {
             title: String(r.title || "Sans titre"),
             location: String(r.location || "Localisation inconnue"),
-            price: String(r.price || "Prix non spécifié"),
+            price: normalizePriceDisplay(r.price),
             description: String(r.description || ""),
             highlights: Array.isArray(r.highlights)
               ? r.highlights.map(String)

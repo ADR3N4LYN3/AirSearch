@@ -27,7 +27,7 @@ export async function callAnthropic(
   try {
     const body: Record<string, unknown> = {
       model: "claude-sonnet-4-20250514",
-      max_tokens: useTools ? 5000 : 4000,
+      max_tokens: useTools ? 5000 : 2000,
       messages: [{ role: "user", content: prompt }],
     };
 
@@ -113,7 +113,7 @@ export async function callAnthropic(
     clearTimeout(timeoutId);
 
     if (error instanceof Error && error.name === 'AbortError') {
-      console.error("[Anthropic API] Request timeout after 30s");
+      console.error(`[Anthropic API] Request timeout after ${timeout / 1000}s`);
       return {
         success: false,
         error: "La recherche a pris trop de temps. Veuillez réessayer avec des critères plus précis.",

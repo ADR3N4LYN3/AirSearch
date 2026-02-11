@@ -27,7 +27,7 @@ export default function ResultsList({ data, onReset }: ResultsListProps) {
             {resultCount} {resultCount === 1 ? "logement trouvé" : "logements trouvés"}
           </h2>
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-            Résultats personnalisés par IA
+            Résultats personnalisés
           </p>
         </div>
 

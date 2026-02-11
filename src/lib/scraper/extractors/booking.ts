@@ -2,7 +2,7 @@ import type { Page } from "playwright-core";
 import type { ScrapedListing } from "../types";
 
 export async function extractBooking(page: Page): Promise<ScrapedListing[]> {
-  await page.waitForSelector('[data-testid="property-card"]', { timeout: 8000 }).catch(() => {});
+  await page.waitForSelector('[data-testid="property-card"]', { timeout: 4000 }).catch(() => {});
 
   return page.evaluate(() => {
     const listings: Array<{
@@ -26,7 +26,7 @@ export async function extractBooking(page: Page): Promise<ScrapedListing[]> {
 
       let price: string | null = null;
       const priceText = priceEl?.textContent?.trim() || "";
-      const priceMatch = priceText.match(/([\d\s,.]+)\s*[€$£]/);
+      const priceMatch = priceText.match(/([\d\s,.]+)\s*[€$£]/) || priceText.match(/[€$£]\s*([\d\s,.]+)/);
       if (priceMatch) price = priceMatch[1].replace(/\s/g, "") + "€";
 
       // Booking ALWAYS uses /10 scale → convert systematically to /5

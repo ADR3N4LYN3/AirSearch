@@ -93,8 +93,7 @@ async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise
       "Accept-Language": "fr-FR,fr;q=0.9",
     });
 
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 12000 });
-    await page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => {});
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 10000 });
 
     const extractor = EXTRACTORS[platform];
     const listings = extractor ? await extractor(page) : [];

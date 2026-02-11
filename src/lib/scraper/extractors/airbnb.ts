@@ -2,7 +2,7 @@ import type { Page } from "playwright-core";
 import type { ScrapedListing } from "../types";
 
 export async function extractAirbnb(page: Page): Promise<ScrapedListing[]> {
-  await page.waitForSelector('[itemprop="itemListElement"], [data-testid="card-container"]', { timeout: 8000 }).catch(() => {});
+  await page.waitForSelector('[itemprop="itemListElement"], [data-testid="card-container"]', { timeout: 4000 }).catch(() => {});
 
   return page.evaluate(() => {
     const listings: Array<{
@@ -13,7 +13,9 @@ export async function extractAirbnb(page: Page): Promise<ScrapedListing[]> {
     const cards = document.querySelectorAll('[itemprop="itemListElement"], [data-testid="card-container"]');
     cards.forEach((card) => {
       const titleEl = card.querySelector('meta[itemprop="name"], span[data-testid="listing-card-name"], [data-testid="listing-card-title"], [id^="title_"]') as HTMLElement | null;
-      const priceEl = card.querySelector('[data-testid="price-availability-row"] span') as HTMLElement | null;
+      const priceEl = card.querySelector('[data-testid="price-availability-row"] span') as HTMLElement | null
+        || card.querySelector('span[aria-hidden="true"] span._1y74zjx') as HTMLElement | null
+        || card.querySelector('._1jo4hgw span, ._tyxjp1 span') as HTMLElement | null;
       const ratingEl = card.querySelector('[aria-label*="note"], [aria-label*="rating"]') as HTMLElement | null;
       const linkEl = card.querySelector('a[href*="/rooms/"]') as HTMLAnchorElement | null;
       const locationEl = card.querySelector('[data-testid="listing-card-subtitle"]') as HTMLElement | null;
@@ -23,7 +25,7 @@ export async function extractAirbnb(page: Page): Promise<ScrapedListing[]> {
 
       let price: string | null = null;
       const priceText = priceEl?.textContent?.trim() || "";
-      const priceMatch = priceText.match(/(\d[\d\s,.]*)\s*[€$]/);
+      const priceMatch = priceText.match(/(\d[\d\s,.]*)\s*[€$]/) || priceText.match(/[€$]\s*(\d[\d\s,.]*)/);
       if (priceMatch) price = priceMatch[1].replace(/\s/g, "") + "€";
 
       let rating: number | null = null;
