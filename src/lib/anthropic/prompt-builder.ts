@@ -86,6 +86,12 @@ export function buildSearchPrompt(criteria: SearchRequest): string {
   parts.push(
     `- "url" doit ABSOLUMENT pointer vers une annonce individuelle (ex: booking.com/hotel/fr/villa-example.html ou airbnb.fr/rooms/12345). Si tu ne trouves pas d'URL spécifique, mets null plutôt qu'une page de recherche.`
   );
+  parts.push(
+    `- Rédige TOUS les textes (summary, description, tips) en français correct et naturel. Pas de fautes, pas de tournures maladroites. Relis-toi.`
+  );
+  parts.push(
+    `- N'inclus AUCUNE balise HTML (<cite>, <a>, <b>, etc.) dans le JSON. Texte brut uniquement.`
+  );
 
   return parts.join("\n");
 }

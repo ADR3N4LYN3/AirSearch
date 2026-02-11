@@ -53,7 +53,7 @@ export default memo(function ResultCard({ result, index }: ResultCardProps) {
 
   return (
     <article
-      className="animate-fade-slide-up group hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer"
+      className="animate-fade-slide-up group hover:shadow-lg hover:-translate-y-1 transition-all duration-200 cursor-pointer flex flex-col"
       style={{
         animationDelay: `${index * 0.08}s`,
         background: "var(--surface)",
@@ -61,6 +61,7 @@ export default memo(function ResultCard({ result, index }: ResultCardProps) {
         overflow: "hidden",
         border: "1px solid var(--border)",
         boxShadow: "var(--shadow-sm)",
+        height: "100%",
       }}
     >
       {/* Property image or placeholder */}
@@ -171,7 +172,7 @@ export default memo(function ResultCard({ result, index }: ResultCardProps) {
       </div>
 
       {/* Content */}
-      <div className="flex flex-col items-center text-center" style={{ padding: "16px 20px 20px 20px" }}>
+      <div className="flex flex-col items-center text-center flex-1" style={{ padding: "16px 20px 20px 20px" }}>
         {/* Location + Price Row */}
         <div className="flex items-start justify-between gap-3 mb-2 w-full">
           <div className="flex-1 min-w-0">
@@ -233,35 +234,44 @@ export default memo(function ResultCard({ result, index }: ResultCardProps) {
           </div>
         </div>
 
-        {/* Rating */}
-        {result.rating != null && (
-          <div className="flex items-center gap-1.5 mb-3">
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="#FFB800"
-              xmlns="http://www.w3.org/2000/svg"
-              style={{ flexShrink: 0 }}
-            >
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-            </svg>
-            <span
-              className="text-sm font-semibold"
-              style={{ color: "var(--text-primary)" }}
-            >
-              {result.rating.toFixed(1)}
-            </span>
-            {result.reviewCount != null && (
-              <span
-                className="text-xs"
-                style={{ color: "var(--text-tertiary)" }}
+        {/* Rating — always visible for consistent layout */}
+        <div className="flex items-center gap-1.5 mb-3" style={{ minHeight: "20px" }}>
+          {result.rating != null ? (
+            <>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="#FFB800"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ flexShrink: 0 }}
               >
-                ({result.reviewCount} avis)
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+              <span
+                className="text-sm font-semibold"
+                style={{ color: "var(--text-primary)" }}
+              >
+                {result.rating.toFixed(1)}
               </span>
-            )}
-          </div>
-        )}
+              {result.reviewCount != null && (
+                <span
+                  className="text-xs"
+                  style={{ color: "var(--text-tertiary)" }}
+                >
+                  ({result.reviewCount} avis)
+                </span>
+              )}
+            </>
+          ) : (
+            <span
+              className="text-xs"
+              style={{ color: "var(--text-tertiary)" }}
+            >
+              Note non disponible
+            </span>
+          )}
+        </div>
 
         {/* Description */}
         <p
@@ -277,6 +287,9 @@ export default memo(function ResultCard({ result, index }: ResultCardProps) {
         >
           {result.description}
         </p>
+
+        {/* Spacer to push highlights + button to bottom */}
+        <div className="flex-1" />
 
         {/* Highlights */}
         {result.highlights && result.highlights.length > 0 && (

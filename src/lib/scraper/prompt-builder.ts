@@ -59,6 +59,8 @@ export function buildAnalysisPrompt(
   parts.push(`RÈGLES STRICTES :`);
   parts.push(`- Le champ "price" DOIT reprendre le prix EXACT des données scrapées (ex: "85€/nuit"). Si le prix indique "NON DISPONIBLE", mets "Prix non disponible".`);
   parts.push(`- Ne JAMAIS inventer un prix. Utilise uniquement les données fournies ci-dessus.`);
+  parts.push(`- Rédige TOUS les textes (summary, description, tips) en français correct et naturel. Pas de fautes, pas de tournures maladroites.`);
+  parts.push(`- N'inclus AUCUNE balise HTML (<cite>, <a>, <b>, etc.) dans le JSON. Texte brut uniquement.`);
   parts.push(`Ta réponse DOIT être uniquement du JSON pur :`);
   parts.push(`{
   "summary": "Résumé court (1-2 phrases)",
