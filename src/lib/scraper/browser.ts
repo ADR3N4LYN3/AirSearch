@@ -1,5 +1,7 @@
 import { chromium } from "patchright";
-import type { Browser, Page, Route } from "patchright";
+import type { Browser, BrowserContext, Page, Route } from "patchright";
+import { FingerprintGenerator } from "fingerprint-generator";
+import { FingerprintInjector } from "fingerprint-injector";
 import type { PlatformUrl, ScrapedListing, ScrapeResult } from "./types";
 import { extractAirbnb } from "./extractors/airbnb";
 import { extractBooking } from "./extractors/booking";
@@ -10,6 +12,17 @@ import { extractExpedia } from "./extractors/expedia";
 import { extractHotels } from "./extractors/hotels";
 import { extractGitesDeFrance } from "./extractors/gites-de-france";
 import { SCRAPE_TIMEOUT_MS } from "@/lib/constants";
+
+// ---------------------------------------------------------------------------
+// Fingerprint generation (realistic browser profiles)
+// ---------------------------------------------------------------------------
+const fingerprintGenerator = new FingerprintGenerator({
+  browsers: [{ name: "chrome", minVersion: 120 }],
+  devices: ["desktop"],
+  operatingSystems: ["windows", "macos"],
+  locales: ["fr-FR"],
+});
+const fingerprintInjector = new FingerprintInjector();
 
 // ---------------------------------------------------------------------------
 // Platform-specific configuration
@@ -118,6 +131,7 @@ async function getBrowser(): Promise<Browser> {
       "--disable-setuid-sandbox",
       "--disable-dev-shm-usage",
       "--disable-gpu",
+      "--disable-blink-features=AutomationControlled",
     ],
   }).then(browser => {
     browserInstance = browser;
@@ -192,15 +206,33 @@ const EXTRACTORS: Record<string, (page: Page) => Promise<ScrapedListing[]>> = {
 // ---------------------------------------------------------------------------
 async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise<ScrapeResult> {
   const { platform, url } = platformUrl;
+  let context: BrowserContext | null = null;
   let page: Page | null = null;
 
   browserInUse++;
   try {
-    page = await browser.newPage();
+    // Generate a realistic fingerprint for this session
+    const { fingerprint, headers } = fingerprintGenerator.getFingerprint();
+
+    context = await browser.newContext({
+      userAgent: fingerprint.navigator.userAgent,
+      viewport: {
+        width: fingerprint.screen.innerWidth,
+        height: fingerprint.screen.innerHeight,
+      },
+      locale: "fr-FR",
+      timezoneId: "Europe/Paris",
+    });
+
+    // Inject fingerprint overrides (navigator, screen, WebGL, etc.)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await fingerprintInjector.attachFingerprintToPlaywright(context as any, { fingerprint, headers });
+
+    page = await context.newPage();
 
     await page.route("**/*", (route: Route) => {
       const type = route.request().resourceType();
-      if (["image", "media", "font"].includes(type)) {
+      if (["media", "font"].includes(type)) {
         return route.abort();
       }
       // Block third-party tracking/analytics scripts
@@ -214,11 +246,25 @@ async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise
     });
 
     await page.setExtraHTTPHeaders({
-      "Accept-Language": "fr-FR,fr;q=0.9",
+      "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+      "Upgrade-Insecure-Requests": "1",
+      "Sec-Fetch-Dest": "document",
+      "Sec-Fetch-Mode": "navigate",
+      "Sec-Fetch-Site": "none",
+      "Sec-Fetch-User": "?1",
     });
 
     const config = PLATFORM_CONFIG[platform] ?? DEFAULT_PLATFORM_CONFIG;
     await page.goto(url, { waitUntil: config.waitUntil, timeout: config.timeout });
+
+    // Simulate human behavior — small random mouse movement + scroll
+    await page.mouse.move(
+      200 + Math.random() * 400,
+      150 + Math.random() * 300,
+      { steps: 5 },
+    ).catch(() => {});
+    await page.evaluate(() => window.scrollBy(0, 100 + Math.random() * 200)).catch(() => {});
 
     const extractor = EXTRACTORS[platform];
     let listings: ScrapedListing[] = [];
@@ -257,6 +303,7 @@ async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise
   } finally {
     browserInUse--;
     if (page) await page.close().catch(() => {});
+    if (context) await context.close().catch(() => {});
   }
 }
 

@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
   // Externalize browser automation & native packages from webpack bundling (critical for standalone output)
   serverExternalPackages: [
     "patchright",
+    "fingerprint-generator",
+    "fingerprint-injector",
     "better-sqlite3",
   ],
 
