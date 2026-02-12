@@ -17,18 +17,12 @@ chromium.use(StealthPlugin());
 // ---------------------------------------------------------------------------
 // Platform-specific configuration
 // ---------------------------------------------------------------------------
-const PLATFORM_CONFIG: Record<string, { waitUntil: "domcontentloaded" | "networkidle"; timeout: number }> = {
-  "Airbnb": { waitUntil: "networkidle", timeout: 20000 },
-  "Booking.com": { waitUntil: "networkidle", timeout: 20000 },
-  "Vrbo": { waitUntil: "networkidle", timeout: 20000 },
-  "Holidu": { waitUntil: "networkidle", timeout: 20000 },
-  "HomeToGo": { waitUntil: "networkidle", timeout: 20000 },
-  "Expedia": { waitUntil: "networkidle", timeout: 20000 },
-  "Hotels.com": { waitUntil: "networkidle", timeout: 20000 },
-  "Gîtes de France": { waitUntil: "networkidle", timeout: 20000 },
-};
+// Use domcontentloaded for page.goto — modern SPAs never reach "networkidle" due to
+// analytics, websockets, and continuous polling. The extractors handle SPA rendering
+// wait via their own waitForSelector/waitForFunction with 10s timeouts.
+const PLATFORM_CONFIG: Record<string, { waitUntil: "domcontentloaded" | "load"; timeout: number }> = {};
 
-const DEFAULT_PLATFORM_CONFIG = { waitUntil: "networkidle" as const, timeout: 20000 };
+const DEFAULT_PLATFORM_CONFIG = { waitUntil: "domcontentloaded" as const, timeout: 25000 };
 
 // ---------------------------------------------------------------------------
 // Platform health tracking
@@ -243,14 +237,16 @@ async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise
     if (listings.length === 0) {
       const html = await page.content();
       const isChallenge = /captcha|challenge|verify|robot|datadome|perimeter/i.test(html);
+      const reason = isChallenge ? "Anti-bot challenge page" : "No listings matched selectors";
       console.warn(
         `[Scraper] ${platform}: 0 listings found | HTML length: ${html.length} | Challenge page: ${isChallenge} | URL: ${url}`
       );
+      recordPlatformResult(platform, false);
+      return { platform, success: false, listings: [], error: reason };
     }
 
-    const success = listings.length > 0;
-    recordPlatformResult(platform, success);
-    return { platform, success, listings };
+    recordPlatformResult(platform, true);
+    return { platform, success: true, listings };
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     console.error(`[Scraper] ${platform} failed: ${msg}`);
