@@ -240,7 +240,7 @@ async function runPipeline(
   let completedPlatforms = 0;
   const totalPlatforms = urls.length;
 
-  // Launch scraping + web search in parallel
+  // Launch scraping first — web search only if scraping fails (saves Sonnet tokens)
   send("progress", { stage: "scraping", message: "Scraping des plateformes en cours...", percent: 5 });
 
   const scrapePromise = scrapeAllPlatforms(urls, (platform, success, listingCount) => {
@@ -257,10 +257,6 @@ async function runPipeline(
     }
   });
 
-  send("progress", { stage: "websearch", message: "Recherche web en cours...", percent: 10 });
-  const webSearchPrompt = buildSearchPrompt(searchRequest);
-  const webSearchPromise = callAnthropic(webSearchPrompt, { timeout: ANTHROPIC_FALLBACK_TIMEOUT_MS });
-
   // Wait for scraping to complete
   let scrapeResults: ScrapeResult[];
   try {
@@ -276,7 +272,7 @@ async function runPipeline(
   );
 
   if (totalListings > 0) {
-    // Scraping succeeded — analyze with Haiku
+    // Scraping succeeded — analyze with Haiku (cheap + fast)
     console.log(
       `[Search/SSE] Scraped ${totalListings} listings from ${scrapeResults.filter((r) => r.success).length}/${scrapeResults.length} platforms`,
     );
@@ -290,11 +286,12 @@ async function runPipeline(
     return analysisResult;
   }
 
-  // No scrape results — fall back to web search (already running in parallel)
-  console.log("[Search/SSE] Scraping returned 0 listings, using web search fallback");
-  send("progress", { stage: "websearch", message: "Recherche web (résultats en cours)...", percent: 60 });
+  // No scrape results — launch web search fallback (Sonnet + web_search tool)
+  console.log("[Search/SSE] Scraping returned 0 listings, launching web search fallback");
+  send("progress", { stage: "websearch", message: "Recherche web en cours...", percent: 50 });
 
-  const webResult = await webSearchPromise;
+  const webSearchPrompt = buildSearchPrompt(searchRequest);
+  const webResult = await callAnthropic(webSearchPrompt, { timeout: ANTHROPIC_FALLBACK_TIMEOUT_MS });
 
   return webResult;
 }

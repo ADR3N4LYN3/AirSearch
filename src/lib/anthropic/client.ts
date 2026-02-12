@@ -27,8 +27,8 @@ export async function callAnthropic(
   try {
     const body: Record<string, unknown> = {
       model: useTools ? "claude-sonnet-4-20250514" : "claude-haiku-4-5-20251001",
-      max_tokens: useTools ? 5000 : 2000,
-      temperature: useTools ? 1 : 0.3,
+      max_tokens: useTools ? 5000 : 4096,
+      temperature: useTools ? 0.5 : 0.3,
       messages: [{ role: "user", content: prompt }],
     };
 
@@ -88,6 +88,10 @@ export async function callAnthropic(
     }
 
     const data = await response.json();
+
+    if (data.usage) {
+      console.log(`[Anthropic API] Usage: ${data.usage.input_tokens} in / ${data.usage.output_tokens} out (${useTools ? "Sonnet+tools" : "Haiku"})`);
+    }
 
     if (data.stop_reason === "max_tokens") {
       console.warn("[Anthropic API] Response truncated (max_tokens reached)");

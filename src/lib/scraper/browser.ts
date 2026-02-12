@@ -32,14 +32,14 @@ const fingerprintInjector = new FingerprintInjector();
 // wait via their own waitForSelector/waitForFunction with 10s timeouts.
 const PLATFORM_CONFIG: Record<string, { waitUntil: "domcontentloaded" | "load"; timeout: number }> = {};
 
-const DEFAULT_PLATFORM_CONFIG = { waitUntil: "domcontentloaded" as const, timeout: 25000 };
+const DEFAULT_PLATFORM_CONFIG = { waitUntil: "domcontentloaded" as const, timeout: 12000 };
 
 // ---------------------------------------------------------------------------
 // Platform health tracking
 // ---------------------------------------------------------------------------
 const platformHealth = new Map<string, { success: number; fail: number; lastFailTime: number }>();
 const HEALTH_COOLDOWN_MS = 30 * 60 * 1000; // 30 min
-const HEALTH_FAIL_THRESHOLD = 5;
+const HEALTH_FAIL_THRESHOLD = 2;
 
 function recordPlatformResult(platform: string, success: boolean): void {
   const entry = platformHealth.get(platform) ?? { success: 0, fail: 0, lastFailTime: 0 };
@@ -79,7 +79,7 @@ const MAX_BROWSER_USES = 100;
 const MAX_BROWSER_AGE_MS = 30 * 60 * 1000; // 30 minutes
 const CIRCUIT_BREAKER_COOLDOWN_MS = 30_000; // 30 seconds
 const CIRCUIT_BREAKER_THRESHOLD = 3;
-const EXTRACTOR_TIMEOUT_MS = 15_000;
+const EXTRACTOR_TIMEOUT_MS = 10_000;
 
 async function getBrowser(): Promise<Browser> {
   // Circuit breaker: if too many consecutive failures, wait before retrying
