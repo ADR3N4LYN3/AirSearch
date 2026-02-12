@@ -2,7 +2,8 @@ import type { Page } from "playwright-core";
 import type { ScrapedListing } from "../types";
 
 export async function extractHomeToGo(page: Page): Promise<ScrapedListing[]> {
-  await page.waitForSelector('[data-testid="result-item"], [class*="SearchResultCard"], [class*="OfferCard"], article', { timeout: 4000 }).catch(() => {});
+  const found = await page.waitForSelector('[data-testid="result-item"], [class*="SearchResultCard"], [class*="OfferCard"], article', { timeout: 10000, state: "attached" }).catch(() => null);
+  if (!found) console.warn("[Scraper] HomeToGo: waitForSelector timeout — selectors not found in DOM");
 
   return page.evaluate(() => {
     const listings: Array<{

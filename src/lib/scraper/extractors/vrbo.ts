@@ -2,7 +2,8 @@ import type { Page } from "playwright-core";
 import type { ScrapedListing } from "../types";
 
 export async function extractVrbo(page: Page): Promise<ScrapedListing[]> {
-  await page.waitForSelector('[data-stid="lodging-card-responsive"], [data-stid="property-listing-results"] > div', { timeout: 4000 }).catch(() => {});
+  const found = await page.waitForSelector('[data-stid="lodging-card-responsive"], [data-stid="property-listing-results"] > div', { timeout: 10000, state: "attached" }).catch(() => null);
+  if (!found) console.warn("[Scraper] Vrbo: waitForSelector timeout — selectors not found in DOM");
 
   return page.evaluate(() => {
     const listings: Array<{

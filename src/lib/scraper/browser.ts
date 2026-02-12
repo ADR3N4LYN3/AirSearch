@@ -18,12 +18,17 @@ chromium.use(StealthPlugin());
 // Platform-specific configuration
 // ---------------------------------------------------------------------------
 const PLATFORM_CONFIG: Record<string, { waitUntil: "domcontentloaded" | "networkidle"; timeout: number }> = {
-  "Booking.com": { waitUntil: "networkidle", timeout: 15000 },
-  "Expedia": { waitUntil: "networkidle", timeout: 15000 },
-  "Hotels.com": { waitUntil: "networkidle", timeout: 15000 },
+  "Airbnb": { waitUntil: "networkidle", timeout: 20000 },
+  "Booking.com": { waitUntil: "networkidle", timeout: 20000 },
+  "Vrbo": { waitUntil: "networkidle", timeout: 20000 },
+  "Holidu": { waitUntil: "networkidle", timeout: 20000 },
+  "HomeToGo": { waitUntil: "networkidle", timeout: 20000 },
+  "Expedia": { waitUntil: "networkidle", timeout: 20000 },
+  "Hotels.com": { waitUntil: "networkidle", timeout: 20000 },
+  "Gîtes de France": { waitUntil: "networkidle", timeout: 20000 },
 };
 
-const DEFAULT_PLATFORM_CONFIG = { waitUntil: "domcontentloaded" as const, timeout: SCRAPE_TIMEOUT_MS };
+const DEFAULT_PLATFORM_CONFIG = { waitUntil: "networkidle" as const, timeout: 20000 };
 
 // ---------------------------------------------------------------------------
 // Platform health tracking
@@ -70,7 +75,7 @@ const MAX_BROWSER_USES = 100;
 const MAX_BROWSER_AGE_MS = 30 * 60 * 1000; // 30 minutes
 const CIRCUIT_BREAKER_COOLDOWN_MS = 30_000; // 30 seconds
 const CIRCUIT_BREAKER_THRESHOLD = 3;
-const EXTRACTOR_TIMEOUT_MS = 8_000;
+const EXTRACTOR_TIMEOUT_MS = 15_000;
 
 async function getBrowser(): Promise<Browser> {
   // Circuit breaker: if too many consecutive failures, wait before retrying
@@ -153,7 +158,9 @@ process.on('SIGINT', cleanupBrowser);
 
 // Warm up browser on module load (non-blocking)
 if (typeof process !== "undefined" && process.env.NODE_ENV === "production") {
-  getBrowser().catch(() => {});
+  getBrowser()
+    .then(() => console.log("[Scraper] Browser warmed up successfully"))
+    .catch((err) => console.error("[Scraper] CRITICAL: Browser warmup failed:", err instanceof Error ? err.message : err));
 }
 
 // ---------------------------------------------------------------------------
@@ -167,7 +174,7 @@ const BLOCKED_SCRIPT_DOMAINS = [
   "hotjar.com",
   "clarity.ms",
   "sentry.io",
-  "datadome.co",
+  // datadome.co deliberately NOT blocked — blocking it prevents anti-bot challenges from resolving
   "newrelic.com",
   "segment.io",
   "optimizely.com",
@@ -202,7 +209,7 @@ async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise
 
     await page.route("**/*", (route: Route) => {
       const type = route.request().resourceType();
-      if (["image", "media", "font", "stylesheet"].includes(type)) {
+      if (["image", "media", "font"].includes(type)) {
         return route.abort();
       }
       // Block third-party tracking/analytics scripts
@@ -234,7 +241,11 @@ async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise
     }
 
     if (listings.length === 0) {
-      console.warn(`[Scraper] ${platform}: 0 listings found. Selectors may have failed for URL: ${url}`);
+      const html = await page.content();
+      const isChallenge = /captcha|challenge|verify|robot|datadome|perimeter/i.test(html);
+      console.warn(
+        `[Scraper] ${platform}: 0 listings found | HTML length: ${html.length} | Challenge page: ${isChallenge} | URL: ${url}`
+      );
     }
 
     const success = listings.length > 0;

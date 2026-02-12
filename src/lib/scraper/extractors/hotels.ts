@@ -6,7 +6,8 @@ import type { ScrapedListing } from "../types";
  * Nearly identical selectors to Vrbo and Expedia extractors.
  */
 export async function extractHotels(page: Page): Promise<ScrapedListing[]> {
-  await page.waitForSelector('[data-stid="lodging-card-responsive"], [data-stid="property-listing-results"] > div, [data-testid="property-card"]', { timeout: 4000 }).catch(() => {});
+  const found = await page.waitForSelector('[data-stid="lodging-card-responsive"], [data-stid="property-listing-results"] > div, [data-testid="property-card"]', { timeout: 10000, state: "attached" }).catch(() => null);
+  if (!found) console.warn("[Scraper] Hotels.com: waitForSelector timeout — selectors not found in DOM");
 
   return page.evaluate(() => {
     const listings: Array<{

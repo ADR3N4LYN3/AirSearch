@@ -1,8 +1,18 @@
 import type { SearchRequest } from "../types";
 import type { PlatformUrl } from "./types";
 
+function toSlug(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 export function buildSearchUrls(criteria: SearchRequest): PlatformUrl[] {
   const dest = encodeURIComponent(criteria.destination);
+  const destSlug = toSlug(criteria.destination);
 
   // ── Airbnb ──
   const airbnbParams = new URLSearchParams();
@@ -50,13 +60,14 @@ export function buildSearchUrls(criteria: SearchRequest): PlatformUrl[] {
   const holiduUrl = `https://www.holidu.fr/s/${dest}?${holiduParams.toString()}`;
 
   // ── HomeToGo (meta-search) ──
+  // HomeToGo uses lowercase slugs: /nice/, /paris/, /saint-malo/
   const htgParams = new URLSearchParams();
   if (criteria.checkin) htgParams.set("arrival", criteria.checkin);
   if (criteria.checkout) htgParams.set("departure", criteria.checkout);
   htgParams.set("adults", String(criteria.adults));
   if (criteria.children > 0) htgParams.set("children", String(criteria.children));
   htgParams.set("currency", "EUR");
-  const htgUrl = `https://www.hometogo.fr/search/${dest}/?${htgParams.toString()}`;
+  const htgUrl = `https://www.hometogo.fr/${destSlug}/?${htgParams.toString()}`;
 
   // ── Expedia ──
   const expediaParams = new URLSearchParams();

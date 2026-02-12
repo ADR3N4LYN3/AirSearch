@@ -2,7 +2,8 @@ import type { Page } from "playwright-core";
 import type { ScrapedListing } from "../types";
 
 export async function extractAirbnb(page: Page): Promise<ScrapedListing[]> {
-  await page.waitForSelector('[itemprop="itemListElement"], [data-testid="card-container"]', { timeout: 4000 }).catch(() => {});
+  const found = await page.waitForSelector('[itemprop="itemListElement"], [data-testid="card-container"]', { timeout: 10000, state: "attached" }).catch(() => null);
+  if (!found) console.warn("[Scraper] Airbnb: waitForSelector timeout — selectors not found in DOM");
 
   return page.evaluate(() => {
     const listings: Array<{

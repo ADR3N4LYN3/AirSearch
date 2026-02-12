@@ -228,7 +228,7 @@ export default memo(function ResultCard({ result, index }: ResultCardProps) {
                 className="text-xs"
                 style={{ color: "var(--text-tertiary)" }}
               >
-                prix estim\u00e9
+                prix estimé
               </span>
             )}
           </div>

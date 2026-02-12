@@ -2,7 +2,8 @@ import type { Page } from "playwright-core";
 import type { ScrapedListing } from "../types";
 
 export async function extractGitesDeFrance(page: Page): Promise<ScrapedListing[]> {
-  await page.waitForSelector('.search-result-item, .gite-card, [data-type="gite"], article.accommodation', { timeout: 4000 }).catch(() => {});
+  const found = await page.waitForSelector('.search-result-item, .gite-card, [data-type="gite"], article.accommodation', { timeout: 10000, state: "attached" }).catch(() => null);
+  if (!found) console.warn("[Scraper] Gîtes de France: waitForSelector timeout — selectors not found in DOM");
 
   return page.evaluate(() => {
     const listings: Array<{
