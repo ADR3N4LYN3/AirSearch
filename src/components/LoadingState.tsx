@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import LottieAnimation from "@/components/LottieAnimation";
+import { Search, Globe, BarChart3, Check } from "lucide-react";
 
 const ROTATING_TEXTS = [
   "Analyse des annonces...",
@@ -10,11 +11,11 @@ const ROTATING_TEXTS = [
   "Sélection des meilleures options...",
 ];
 
-const STAGE_LABELS: Record<string, string> = {
-  scraping: "Analyse des plateformes...",
-  websearch: "Recherche web IA...",
-  analyzing: "Analyse des résultats...",
-};
+const STEPS = [
+  { stage: "scraping", label: "Plateformes", icon: Search },
+  { stage: "websearch", label: "Recherche IA", icon: Globe },
+  { stage: "analyzing", label: "Analyse", icon: BarChart3 },
+] as const;
 
 interface LoadingStateProps {
   progress?: {
@@ -36,6 +37,9 @@ export default function LoadingState({ progress }: LoadingStateProps) {
   }, [progress]);
 
   const hasProgress = progress != null;
+  const currentStageIndex = hasProgress
+    ? STEPS.findIndex((s) => s.stage === progress.stage)
+    : -1;
 
   return (
     <div
@@ -46,7 +50,7 @@ export default function LoadingState({ progress }: LoadingStateProps) {
       aria-busy="true"
     >
       <span className="sr-only">Recherche en cours, veuillez patienter</span>
-      {/* Main Loading Indicator */}
+
       <div className="flex flex-col items-center gap-6">
         {/* Animated airplane */}
         <div style={{ width: "120px", height: "120px" }}>
@@ -59,7 +63,7 @@ export default function LoadingState({ progress }: LoadingStateProps) {
           />
         </div>
 
-        {/* Text */}
+        {/* Title */}
         <div className="flex flex-col items-center gap-2">
           <p
             className="text-xl font-semibold"
@@ -71,35 +75,100 @@ export default function LoadingState({ progress }: LoadingStateProps) {
           >
             Recherche en cours...
           </p>
-          <p
-            className="text-sm"
-            style={{ color: "var(--text-secondary)" }}
-          >
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
             Notre technologie analyse le web pour vous
           </p>
         </div>
 
-        {/* Progress bar */}
-        <div
-          className="overflow-hidden relative"
-          style={{
-            width: "280px",
-            height: "4px",
-            borderRadius: "var(--radius-chip)",
-            background: "var(--bg-secondary)",
-          }}
-        >
-          {hasProgress ? (
-            <div
-              style={{
-                background: "var(--accent)",
-                width: `${progress.percent}%`,
-                height: "100%",
-                borderRadius: "var(--radius-chip)",
-                transition: "width 0.5s ease",
-              }}
-            />
-          ) : (
+        {/* Stepper or fallback progress bar */}
+        {hasProgress ? (
+          <div
+            className="flex items-start justify-center"
+            style={{ width: "320px" }}
+          >
+            {STEPS.map((step, i) => {
+              const isCompleted = i < currentStageIndex;
+              const isActive = i === currentStageIndex;
+              const Icon = isCompleted ? Check : step.icon;
+
+              return (
+                <Fragment key={step.stage}>
+                  <div
+                    className="flex flex-col items-center gap-2"
+                    style={{ minWidth: "72px" }}
+                  >
+                    <div
+                      style={{
+                        width: "40px",
+                        height: "40px",
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background:
+                          isCompleted || isActive
+                            ? "var(--accent)"
+                            : "var(--bg-secondary)",
+                        border: `2px solid ${
+                          isCompleted || isActive
+                            ? "var(--accent)"
+                            : "var(--border)"
+                        }`,
+                        transition: "all 0.4s ease",
+                      }}
+                    >
+                      <Icon
+                        size={18}
+                        style={{
+                          color:
+                            isCompleted || isActive
+                              ? "white"
+                              : "var(--text-secondary)",
+                          transition: "color 0.4s ease",
+                        }}
+                      />
+                    </div>
+                    <span
+                      className="text-xs text-center"
+                      style={{
+                        color: isActive
+                          ? "var(--text-primary)"
+                          : "var(--text-secondary)",
+                        fontWeight: isActive ? 600 : 400,
+                        transition: "all 0.3s ease",
+                      }}
+                    >
+                      {step.label}
+                    </span>
+                  </div>
+
+                  {i < STEPS.length - 1 && (
+                    <div
+                      style={{
+                        flex: 1,
+                        height: "2px",
+                        marginTop: "19px",
+                        background: isCompleted
+                          ? "var(--accent)"
+                          : "var(--border)",
+                        transition: "background 0.4s ease",
+                      }}
+                    />
+                  )}
+                </Fragment>
+              );
+            })}
+          </div>
+        ) : (
+          <div
+            className="overflow-hidden relative"
+            style={{
+              width: "280px",
+              height: "4px",
+              borderRadius: "var(--radius-chip)",
+              background: "var(--bg-secondary)",
+            }}
+          >
             <div
               className="absolute inset-0"
               style={{
@@ -109,32 +178,21 @@ export default function LoadingState({ progress }: LoadingStateProps) {
                 animation: "progress 2s ease-in-out infinite",
               }}
             />
-          )}
-        </div>
-
-        {/* Status text */}
-        {hasProgress ? (
-          <div className="flex flex-col items-center gap-1">
-            <p
-              className="text-sm animate-fade-in"
-              style={{
-                color: "var(--text-primary)",
-                fontWeight: 500,
-                height: "20px",
-              }}
-            >
-              {progress.message}
-            </p>
-            <p
-              className="text-xs"
-              style={{
-                color: "var(--text-secondary)",
-                fontWeight: 400,
-              }}
-            >
-              {STAGE_LABELS[progress.stage] || progress.stage}
-            </p>
           </div>
+        )}
+
+        {/* Status message */}
+        {hasProgress ? (
+          <p
+            className="text-sm animate-fade-in"
+            style={{
+              color: "var(--text-primary)",
+              fontWeight: 500,
+              height: "20px",
+            }}
+          >
+            {progress.message}
+          </p>
         ) : (
           <p
             key={textIndex}
@@ -150,7 +208,7 @@ export default function LoadingState({ progress }: LoadingStateProps) {
         )}
       </div>
 
-      {/* Progress bar keyframes (only needed for fallback animation) */}
+      {/* Fallback animation keyframes */}
       {!hasProgress && (
         <style jsx>{`
           @keyframes progress {

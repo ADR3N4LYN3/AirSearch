@@ -246,12 +246,15 @@ async function runPipeline(
   const scrapePromise = scrapeAllPlatforms(urls, (platform, success, listingCount) => {
     completedPlatforms++;
     const percent = Math.round((completedPlatforms / totalPlatforms) * 40) + 5; // 5-45%
-    const statusText = success ? `${listingCount} résultat${listingCount > 1 ? "s" : ""}` : "échec";
-    send("progress", {
-      stage: "scraping",
-      message: `${platform} analysé (${statusText})`,
-      percent,
-    });
+    if (success) {
+      send("progress", {
+        stage: "scraping",
+        message: `${platform} — ${listingCount} résultat${listingCount > 1 ? "s" : ""}`,
+        percent,
+      });
+    } else {
+      send("progress", { stage: "scraping", message: "Analyse en cours...", percent });
+    }
   });
 
   send("progress", { stage: "websearch", message: "Recherche web IA en cours...", percent: 10 });
