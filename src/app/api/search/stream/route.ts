@@ -257,7 +257,7 @@ async function runPipeline(
     }
   });
 
-  send("progress", { stage: "websearch", message: "Recherche web IA en cours...", percent: 10 });
+  send("progress", { stage: "websearch", message: "Recherche web en cours...", percent: 10 });
   const webSearchPrompt = buildSearchPrompt(searchRequest);
   const webSearchPromise = callAnthropic(webSearchPrompt, { timeout: ANTHROPIC_FALLBACK_TIMEOUT_MS });
 
@@ -280,7 +280,7 @@ async function runPipeline(
     console.log(
       `[Search/SSE] Scraped ${totalListings} listings from ${scrapeResults.filter((r) => r.success).length}/${scrapeResults.length} platforms`,
     );
-    send("progress", { stage: "analyzing", message: "Analyse IA des résultats...", percent: 50 });
+    send("progress", { stage: "analyzing", message: "Analyse des résultats...", percent: 50 });
 
     const analysisPrompt = buildAnalysisPrompt(searchRequest, scrapeResults);
     const analysisResult = await callAnthropic(analysisPrompt, { useTools: false, timeout: ANTHROPIC_FALLBACK_TIMEOUT_MS });
@@ -292,7 +292,7 @@ async function runPipeline(
 
   // No scrape results — fall back to web search (already running in parallel)
   console.log("[Search/SSE] Scraping returned 0 listings, using web search fallback");
-  send("progress", { stage: "websearch", message: "Recherche web IA (résultats en cours)...", percent: 60 });
+  send("progress", { stage: "websearch", message: "Recherche web (résultats en cours)...", percent: 60 });
 
   const webResult = await webSearchPromise;
 

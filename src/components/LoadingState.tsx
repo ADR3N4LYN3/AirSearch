@@ -13,7 +13,7 @@ const ROTATING_TEXTS = [
 
 const STEPS = [
   { stage: "scraping", label: "Plateformes", icon: Search },
-  { stage: "websearch", label: "Recherche IA", icon: Globe },
+  { stage: "websearch", label: "Recherche web", icon: Globe },
   { stage: "analyzing", label: "Analyse", icon: BarChart3 },
 ] as const;
 
