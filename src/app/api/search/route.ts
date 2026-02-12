@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
   }
 
   const searchVector = buildSearchVector(searchRequest);
-  const vectorHit = findSimilarSearch(searchVector);
+  const vectorHit = findSimilarSearch(searchVector, searchRequest.destination);
   if (vectorHit) {
     console.log(`[Search] L3 vector cache hit (similar search found)`);
     setInMemory(cacheKey, vectorHit);

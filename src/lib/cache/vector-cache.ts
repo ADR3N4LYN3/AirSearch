@@ -44,19 +44,21 @@ function cosineSimilarity(a: number[], b: number[]): number {
  */
 export function findSimilarSearch(
   vector: number[],
+  destination: string,
   threshold: number = DEFAULT_THRESHOLD
 ): SearchResponse | null {
   try {
     const db = getDb();
     const now = Date.now();
 
-    // Load all non-expired vectors
+    // Filter by exact destination — cosine similarity only compares dates/guests/budget
+    const normalizedDest = destination.toLowerCase().trim();
     const rows = db
       .prepare(
         `SELECT cache_key, vector FROM search_vectors
-         WHERE created_at + (ttl_seconds * 1000) > ?`
+         WHERE LOWER(TRIM(destination)) = ? AND created_at + (ttl_seconds * 1000) > ?`
       )
-      .all(now) as VectorRow[];
+      .all(normalizedDest, now) as VectorRow[];
 
     if (rows.length === 0) return null;
 

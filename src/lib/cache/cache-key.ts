@@ -51,18 +51,6 @@ export function buildCacheKey(req: SearchRequest): string {
 }
 
 /**
- * Converts a destination string into a simple numeric hash for the vector.
- */
-function hashDestination(destination: string): number {
-  let hash = 5381;
-  const normalized = destination.toLowerCase().trim();
-  for (let i = 0; i < normalized.length; i++) {
-    hash = ((hash << 5) + hash + normalized.charCodeAt(i)) | 0;
-  }
-  return hash >>> 0;
-}
-
-/**
  * Converts a date string (YYYY-MM-DD) into days since Unix epoch.
  * Returns 0 if the date is missing or invalid.
  */
@@ -77,11 +65,13 @@ function daysSinceEpoch(dateStr: string | undefined): number {
  * Builds a numeric vector representation of a search request
  * for cosine-similarity matching in the L3 vector cache.
  *
- * Vector: [hash_destination, checkin_days, checkout_days, adults, children, budgetMin, budgetMax]
+ * Destination is matched exactly via SQL WHERE clause (not in the vector),
+ * so the vector only contains dates/guests/budget for similarity comparison.
+ *
+ * Vector: [checkin_days, checkout_days, adults, children, budgetMin, budgetMax]
  */
 export function buildSearchVector(req: SearchRequest): number[] {
   return [
-    hashDestination(req.destination),
     daysSinceEpoch(req.checkin),
     daysSinceEpoch(req.checkout),
     req.adults,
