@@ -235,12 +235,17 @@ async function scrapeSingle(browser: Browser, platformUrl: PlatformUrl): Promise
     }
 
     if (listings.length === 0) {
-      const html = await page.content();
-      const isChallenge = /captcha|challenge|verify|robot|datadome|perimeter/i.test(html);
-      const reason = isChallenge ? "Anti-bot challenge page" : "No listings matched selectors";
-      console.warn(
-        `[Scraper] ${platform}: 0 listings found | HTML length: ${html.length} | Challenge page: ${isChallenge} | URL: ${url}`
-      );
+      let reason = "No listings matched selectors";
+      try {
+        const html = await page.content();
+        const isChallenge = /captcha|challenge|verify|robot|datadome|perimeter/i.test(html);
+        reason = isChallenge ? "Anti-bot challenge page" : reason;
+        console.warn(
+          `[Scraper] ${platform}: 0 listings found | HTML length: ${html.length} | Challenge page: ${isChallenge} | URL: ${url}`
+        );
+      } catch {
+        console.warn(`[Scraper] ${platform}: 0 listings found | Page already closed | URL: ${url}`);
+      }
       recordPlatformResult(platform, false);
       return { platform, success: false, listings: [], error: reason };
     }

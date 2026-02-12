@@ -2,15 +2,17 @@ import type { Page } from "playwright-core";
 import type { ScrapedListing } from "../types";
 
 export async function extractHolidu(page: Page): Promise<ScrapedListing[]> {
-  // Holidu is a React SPA — listings are in window.listPage.offersV2.offers
-  // Wait for the JS object to be populated rather than CSS selectors
+  // Holidu is a React SPA — listings are in window.listPage JS object.
+  // Keep timeout short (6s) so DOM fallback has time within the 15s extractor limit.
   await page.waitForFunction(
     () => {
       const w = window as unknown as Record<string, unknown>;
       const lp = w.listPage as Record<string, unknown> | undefined;
-      return lp?.offersV2 != null;
+      if (lp?.offersV2 != null) return true;
+      // Also check for DOM links as early signal
+      return document.querySelectorAll('a[href*="/d/"]').length > 0;
     },
-    { timeout: 10000 },
+    { timeout: 6000 },
   ).catch(() => {});
 
   return page.evaluate(() => {
