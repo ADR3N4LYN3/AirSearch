@@ -1,4 +1,4 @@
-import type { Page } from "playwright-core";
+import type { Page } from "patchright";
 import type { ScrapedListing } from "../types";
 
 export async function extractAbritel(page: Page): Promise<ScrapedListing[]> {

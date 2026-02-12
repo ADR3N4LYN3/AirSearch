@@ -3,11 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
 
-  // Externalize Playwright packages from webpack bundling (critical for standalone output)
+  // Externalize browser automation & native packages from webpack bundling (critical for standalone output)
   serverExternalPackages: [
-    "playwright-core",
-    "playwright-extra",
-    "puppeteer-extra-plugin-stealth",
+    "patchright",
     "better-sqlite3",
   ],
 

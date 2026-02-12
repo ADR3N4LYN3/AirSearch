@@ -16,9 +16,9 @@ COPY package.json package-lock.json ./
 # Install dependencies
 RUN npm ci --prefer-offline --no-audit
 
-# Install Playwright Chromium browser using playwright-core CLI
+# Install Patchright Chromium browser (non-detectable Playwright fork)
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-RUN npx playwright-core install chromium
+RUN npx patchright install chromium
 
 # Copy source code
 COPY . .
@@ -72,7 +72,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder /ms-playwright /ms-playwright
 RUN chown -R nextjs:nodejs /ms-playwright
 
-# Copy production node_modules for externalized packages (playwright-core, etc.)
+# Copy production node_modules for externalized packages (patchright, etc.)
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 
 # Create writable data directory for SQLite cache (must be before USER switch)

@@ -1,6 +1,5 @@
-import { chromium } from "playwright-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import type { Browser, Page, Route } from "playwright-core";
+import { chromium } from "patchright";
+import type { Browser, Page, Route } from "patchright";
 import type { PlatformUrl, ScrapedListing, ScrapeResult } from "./types";
 import { extractAirbnb } from "./extractors/airbnb";
 import { extractBooking } from "./extractors/booking";
@@ -11,8 +10,6 @@ import { extractExpedia } from "./extractors/expedia";
 import { extractHotels } from "./extractors/hotels";
 import { extractGitesDeFrance } from "./extractors/gites-de-france";
 import { SCRAPE_TIMEOUT_MS } from "@/lib/constants";
-
-chromium.use(StealthPlugin());
 
 // ---------------------------------------------------------------------------
 // Platform-specific configuration
