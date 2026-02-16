@@ -46,10 +46,19 @@ export async function extractHolidu(page: Page): Promise<ScrapedListing[]> {
           if (daily != null && daily > 0) price = `${Math.round(daily)}€`;
 
           let rating: number | null = null;
-          const ratingValue = ratingObj?.value as number | undefined;
+          // Holidu may use different field names and scales (0-5, 0-10, or 0-100)
+          const ratingValue = (ratingObj?.average ?? ratingObj?.score ?? ratingObj?.value) as number | undefined;
           if (ratingValue != null && ratingValue > 0) {
-            // Holidu uses 0-100 scale → convert to /5
-            rating = Math.round((ratingValue / 20) * 10) / 10;
+            if (ratingValue > 10) {
+              // 0-100 scale → convert to /5
+              rating = Math.round((ratingValue / 20) * 10) / 10;
+            } else if (ratingValue > 5) {
+              // 0-10 scale → convert to /5
+              rating = Math.round((ratingValue / 2) * 10) / 10;
+            } else {
+              // Already 0-5 scale
+              rating = Math.round(ratingValue * 10) / 10;
+            }
           }
 
           const reviewCount = (ratingObj?.count as number) || null;
