@@ -314,8 +314,9 @@ export async function scrapeAllPlatforms(
   try {
     const browser = await getBrowser();
 
-    // Filter out unhealthy platforms
-    const healthyUrls = urls.filter((u) => isPlatformHealthy(u.platform));
+    // Filter out unhealthy platforms and shuffle to randomize access patterns
+    const healthyUrls = urls.filter((u) => isPlatformHealthy(u.platform))
+      .sort(() => Math.random() - 0.5);
     const skippedUrls = urls.filter((u) => !isPlatformHealthy(u.platform));
 
     // Report skipped platforms immediately
@@ -330,8 +331,10 @@ export async function scrapeAllPlatforms(
       return result;
     });
 
+    // Stagger launches to avoid burst traffic pattern (anti-bot detection signal)
     const results = await Promise.allSettled(
-      healthyUrls.map(async (u) => {
+      healthyUrls.map(async (u, i) => {
+        if (i > 0) await new Promise(r => setTimeout(r, i * (200 + Math.random() * 300)));
         const result = await scrapeSingle(browser, u);
         onProgress?.(result.platform, result.success, result.listings.length);
         return result;

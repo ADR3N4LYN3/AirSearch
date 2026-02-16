@@ -77,7 +77,12 @@ export async function extractHolidu(page: Page): Promise<ScrapedListing[]> {
             rating,
             reviewCount,
             url,
-            location: (locationObj?.name as string) || null,
+            // Prefer specific address fields over generic search area name
+            location: (locationObj?.city as string)
+              || (locationObj?.address as string)
+              || (locationObj?.region as string)
+              || (locationObj?.name as string)
+              || null,
             image,
           });
         }
