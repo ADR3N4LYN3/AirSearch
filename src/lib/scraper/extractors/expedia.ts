@@ -23,9 +23,11 @@ export async function extractExpedia(page: Page): Promise<ScrapedListing[]> {
         || card.querySelector('.uitk-type-500, .uitk-type-600') as HTMLElement | null;
       const ratingEl = card.querySelector('[data-stid="content-hotel-review-rating"] span, .uitk-badge-base-text') as HTMLElement | null;
       const reviewCountEl = card.querySelector('[data-stid="content-hotel-review-total"] span') as HTMLElement | null;
-      const linkEl = card.querySelector('a[data-stid="open-hotel-information"], a[href*="/Hotel/"], a[href*="/p/"]') as HTMLAnchorElement | null;
+      const linkEl = card.querySelector('a[data-stid="open-hotel-information"], a[href*="/Hotel/"], a[href*="/p/"]') as HTMLAnchorElement | null
+        || card.querySelector('a[href]') as HTMLAnchorElement | null;
       const locationEl = card.querySelector('[data-stid="content-hotel-subtitle"] span') as HTMLElement | null;
-      const imgEl = card.querySelector('img[data-stid="lodging-card-image"], img[src*="expedia"], img[src*="trvl-media"]') as HTMLImageElement | null;
+      const imgEl = card.querySelector('img[data-stid="lodging-card-image"], img[src*="expedia"], img[src*="trvl-media"]') as HTMLImageElement | null
+        || card.querySelector('img[src]') as HTMLImageElement | null;
 
       const title = titleEl?.textContent?.trim() || "";
       if (!title) return;

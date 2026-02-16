@@ -57,6 +57,8 @@ export function buildAnalysisPrompt(
   parts.push(`Privilégie les annonces avec de bonnes notes et un bon rapport qualité/prix.`);
   parts.push(`NE FILTRE PAS par distance géographique — toutes les annonces fournies sont déjà dans la zone recherchée.`);
   parts.push(`RÈGLES STRICTES :`);
+  parts.push(`- Le champ "title" DOIT être la copie EXACTE mot pour mot du titre scrapé (ne PAS reformuler, traduire ou raccourcir). C'est CRITIQUE pour le matching d'images.`);
+  parts.push(`- Le champ "url" DOIT être la copie EXACTE de l'URL scrapée (ne PAS modifier).`);
   parts.push(`- Le champ "price" DOIT reprendre le prix EXACT des données scrapées (ex: "85€/nuit"). Si le prix indique "NON DISPONIBLE", mets "Prix non disponible".`);
   parts.push(`- Ne JAMAIS inventer un prix. Utilise uniquement les données fournies ci-dessus.`);
   parts.push(`- Rédige TOUS les textes (summary, description, tips) en français correct et naturel. Pas de fautes, pas de tournures maladroites.`);
